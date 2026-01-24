@@ -7,7 +7,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { loadsService } from '../services/loads';
 import { Load } from '../types';
 
@@ -122,7 +124,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Weight:</Text>
-            <Text style={styles.value}>{load.weight} kg</Text>
+            <Text style={styles.value}>{load.weight >= 1000 ? `${(load.weight / 1000).toFixed(1)} т` : `${load.weight} кг`}</Text>
           </View>
           {load.volume && (
             <View style={styles.infoRow}>
@@ -163,10 +165,18 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
               <Text style={styles.label}>Name:</Text>
               <Text style={styles.value}>{load.shipper.name}</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Phone:</Text>
-              <Text style={styles.value}>{load.shipper.phone}</Text>
-            </View>
+            {load.shipper.phone && (
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Phone:</Text>
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(`tel:${load.shipper.phone}`)}
+                  style={styles.phoneButton}
+                >
+                  <Ionicons name="call" size={16} color="#2563eb" />
+                  <Text style={styles.phoneValue}>{load.shipper.phone}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
             {load.shipper.rating && (
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Rating:</Text>
@@ -260,6 +270,18 @@ const styles = StyleSheet.create({
     color: '#333',
     flex: 1,
     fontWeight: '500',
+  },
+  phoneButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+  },
+  phoneValue: {
+    fontSize: 16,
+    color: '#2563eb',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   footer: {
     backgroundColor: '#fff',

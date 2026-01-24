@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { journeyService } from '../services/journey';
 import { loadsService } from '../services/loads';
@@ -16,6 +18,8 @@ interface Props {
   route: any;
   navigation: any;
 }
+
+type MapProvider = 'google' | 'yandex';
 
 export default function JourneyControlsScreen({ route, navigation }: Props) {
   const { loadId } = route.params;
@@ -27,8 +31,13 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
     latitude: number;
     longitude: number;
   } | null>(null);
+  const [mapProvider, setMapProvider] = useState<MapProvider>('google');
+  const [routeCoordinates, setRouteCoordinates] = useState<
+    Array<{ latitude: number; longitude: number }>
+  >([]);
 
   const locationInterval = useRef<NodeJS.Timeout | null>(null);
+  const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
     initialize();
@@ -115,6 +124,43 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
       );
     }
 
+    // Get initial location and update map
+    try {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const newLocation = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+
+      setCurrentLocation(newLocation);
+
+      // Update route coordinates with current location
+      if (load?.destinationLatitude && load?.destinationLongitude) {
+        setRouteCoordinates([
+          newLocation,
+          {
+            latitude: load.destinationLatitude,
+            longitude: load.destinationLongitude,
+          },
+        ]);
+      }
+
+      // Center map on current location
+      if (mapRef.current) {
+        mapRef.current.animateToRegion({
+          latitude: newLocation.latitude,
+          longitude: newLocation.longitude,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error getting initial location:', error);
+    }
+
     // Send location updates every 10 seconds
     locationInterval.current = setInterval(async () => {
       try {
@@ -125,15 +171,28 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
         const locationData = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          accuracy: location.coords.accuracy,
+          accuracy: location.coords.accuracy ?? undefined,
           speed: location.coords.speed || 0,
           timestamp: location.timestamp,
         };
 
-        setCurrentLocation({
+        const newLocation = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-        });
+        };
+
+        setCurrentLocation(newLocation);
+
+        // Update route with new current location
+        if (load?.destinationLatitude && load?.destinationLongitude) {
+          setRouteCoordinates([
+            newLocation,
+            {
+              latitude: load.destinationLatitude,
+              longitude: load.destinationLongitude,
+            },
+          ]);
+        }
 
         // Send location to backend
         await journeyService.sendLocation(journeyId, locationData);
@@ -151,6 +210,17 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
     setTracking(false);
   };
 
+  const toggleMapProvider = () => {
+    setMapProvider((prev) => (prev === 'google' ? 'yandex' : 'google'));
+  };
+
+  const getMapProvider = () => {
+    if (Platform.OS === 'ios') {
+      return undefined; // iOS uses Apple Maps by default
+    }
+    return mapProvider === 'google' ? PROVIDER_GOOGLE : undefined;
+  };
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -161,6 +231,74 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
 
   return (
     <View style={styles.container}>
+      {journey && load?.originLatitude && load?.originLongitude && load?.destinationLatitude && load?.destinationLongitude && (
+        <View style={styles.mapContainer}>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            provider={getMapProvider()}
+            initialRegion={{
+              latitude: load.originLatitude,
+              longitude: load.originLongitude,
+              latitudeDelta: 0.5,
+              longitudeDelta: 0.5,
+            }}
+          >
+            {/* Origin marker (A) */}
+            <Marker
+              coordinate={{
+                latitude: load.originLatitude,
+                longitude: load.originLongitude,
+              }}
+              title="Origin"
+              description={load.originCity}
+              pinColor="green"
+            />
+
+            {/* Destination marker (B) */}
+            <Marker
+              coordinate={{
+                latitude: load.destinationLatitude,
+                longitude: load.destinationLongitude,
+              }}
+              title="Destination"
+              description={load.destinationCity}
+              pinColor="red"
+            />
+
+            {/* Current location marker */}
+            {currentLocation && (
+              <Marker
+                coordinate={currentLocation}
+                title="Your Location"
+                pinColor="blue"
+              />
+            )}
+
+            {/* Route line */}
+            {routeCoordinates.length > 0 && (
+              <Polyline
+                coordinates={routeCoordinates}
+                strokeColor="#2563eb"
+                strokeWidth={3}
+              />
+            )}
+          </MapView>
+
+          {/* Map provider switcher */}
+          {Platform.OS === 'android' && (
+            <TouchableOpacity
+              style={styles.mapSwitcher}
+              onPress={toggleMapProvider}
+            >
+              <Text style={styles.mapSwitcherText}>
+                {mapProvider === 'google' ? 'Google Maps' : 'Yandex Maps'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
       <View style={styles.content}>
         {load && (
           <>
@@ -242,6 +380,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  mapContainer: {
+    height: 300,
+    position: 'relative',
+  },
+  map: {
+    flex: 1,
+  },
+  mapSwitcher: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  mapSwitcherText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2563eb',
   },
   content: {
     flex: 1,

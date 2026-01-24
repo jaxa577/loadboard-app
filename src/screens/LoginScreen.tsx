@@ -10,9 +10,13 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +24,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter email and password');
+      Alert.alert(t('common.error'), 'Please enter email and password');
       return;
     }
 
@@ -29,7 +33,7 @@ export default function LoginScreen() {
       await signIn(email, password);
     } catch (error: any) {
       Alert.alert(
-        'Login Failed',
+        t('auth.loginError'),
         error.response?.data?.message || error.message || 'Invalid credentials'
       );
     } finally {
@@ -39,17 +43,17 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
       <View style={styles.content}>
         <Text style={styles.title}>Driver App</Text>
-        <Text style={styles.subtitle}>Login to access your loads</Text>
+        <Text style={styles.subtitle}>{t('auth.loginTitle')}</Text>
 
         <View style={styles.form}>
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={t('auth.email')}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -59,7 +63,7 @@ export default function LoginScreen() {
 
           <TextInput
             style={styles.input}
-            placeholder="Password"
+            placeholder={t('auth.password')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -74,10 +78,20 @@ export default function LoginScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>{t('auth.login')}</Text>
             )}
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={styles.registerLink}
+          onPress={() => (navigation as any).navigate('Register')}
+          disabled={loading}
+        >
+          <Text style={styles.registerText}>
+            Don't have an account? <Text style={styles.registerTextBold}>Sign Up</Text>
+          </Text>
+        </TouchableOpacity>
 
         <Text style={styles.note}>
           This app is for drivers only. Shippers and brokers should use the web platform.
@@ -106,6 +120,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
+    color: '#333',
     color: '#666',
     marginBottom: 48,
     textAlign: 'center',
@@ -121,6 +136,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     fontSize: 16,
+    color: '#333',
   },
   button: {
     backgroundColor: '#2563eb',
@@ -137,10 +153,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+  registerLink: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  registerText: {
+    fontSize: 16,
+    color: '#333',
+    color: '#666',
+  },
+  registerTextBold: {
+    color: '#2563eb',
+    fontWeight: '600',
+  },
   note: {
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
     fontStyle: 'italic',
+    marginTop: 16,
   },
 });

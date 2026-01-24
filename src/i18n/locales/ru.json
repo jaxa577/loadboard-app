@@ -1,0 +1,127 @@
+{
+  "common": {
+    "loading": "Загрузка...",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "submit": "Отправить",
+    "apply": "Применить",
+    "confirm": "Подтвердить",
+    "yes": "Да",
+    "no": "Нет",
+    "error": "Ошибка",
+    "success": "Успешно"
+  },
+  "auth": {
+    "login": "Вход",
+    "register": "Регистрация",
+    "email": "Email",
+    "password": "Пароль",
+    "name": "Имя",
+    "phone": "Телефон",
+    "role": "Роль",
+    "loginTitle": "Войти",
+    "registerTitle": "Создать аккаунт",
+    "logout": "Выйти",
+    "loginError": "Ошибка входа",
+    "registerError": "Ошибка регистрации",
+    "verificationTitle": "Верификация",
+    "verificationCode": "Код подтверждения",
+    "enterCode": "Введите 6-значный код, отправленный на ваш email"
+  },
+  "roles": {
+    "driver": "Водитель",
+    "broker": "Брокер",
+    "shipper": "Грузоотправитель"
+  },
+  "nav": {
+    "availableLoads": "Доступные грузы",
+    "applications": "Заявки",
+    "history": "История",
+    "chat": "Сообщения",
+    "profile": "Профиль"
+  },
+  "loads": {
+    "availableLoads": "Доступные грузы",
+    "myApplications": "Мои заявки",
+    "loadHistory": "История грузов",
+    "loadDetails": "Детали груза",
+    "noLoads": "Нет доступных грузов",
+    "searchPlaceholder": "Поиск по городу или типу груза...",
+    "filters": "Фильтры",
+    "clearFilters": "Очистить все",
+    "applyFilters": "Применить фильтры",
+    "priceRange": "Диапазон цен",
+    "weightRange": "Диапазон веса (кг)",
+    "cargoType": "Тип груза",
+    "originCity": "Город отправления",
+    "destinationCity": "Город назначения",
+    "min": "Мин",
+    "max": "Макс",
+    "applyToLoad": "Подать заявку",
+    "applicationSubmitted": "Заявка отправлена",
+    "shipperWillReview": "Грузоотправитель рассмотрит вашу заявку"
+  },
+  "loadDetails": {
+    "routeInformation": "Информация о маршруте",
+    "origin": "Отправление",
+    "destination": "Назначение",
+    "cargoDetails": "Детали груза",
+    "type": "Тип",
+    "weight": "Вес",
+    "volume": "Объем",
+    "schedule": "Расписание",
+    "loadingDate": "Дата загрузки",
+    "deliveryDate": "Дата доставки",
+    "shipperInfo": "Информация о грузоотправителе",
+    "name": "Имя",
+    "phone": "Телефон",
+    "rating": "Рейтинг"
+  },
+  "journey": {
+    "startJourney": "Начать поездку",
+    "pauseJourney": "Приостановить поездку",
+    "resumeJourney": "Возобновить поездку",
+    "endJourney": "Завершить поездку",
+    "journeyActive": "Поездка активна",
+    "journeyPaused": "Поездка приостановлена",
+    "trackingEnabled": "GPS отслеживание включено"
+  },
+  "profile": {
+    "myProfile": "Мой профиль",
+    "editProfile": "Редактировать профиль",
+    "personalInfo": "Личная информация",
+    "accountSettings": "Настройки аккаунта",
+    "language": "Язык",
+    "notifications": "Уведомления",
+    "ratings": "Рейтинги и отзывы"
+  },
+  "chat": {
+    "conversations": "Беседы",
+    "typeMessage": "Введите сообщение...",
+    "send": "Отправить",
+    "noMessages": "Пока нет сообщений"
+  },
+  "applications": {
+    "myApplications": "Мои заявки",
+    "status": {
+      "pending": "В ожидании",
+      "accepted": "Принято",
+      "rejected": "Отклонено"
+    },
+    "noApplications": "Пока нет заявок"
+  },
+  "truckTypes": {
+    "TENT": "Тент",
+    "REFRIGERATOR": "Рефрижератор",
+    "CONTAINER": "Контейнер",
+    "PLATFORM": "Платформа",
+    "TANK": "Цистерна"
+  },
+  "loadStatus": {
+    "OPEN": "Открыт",
+    "IN_PROGRESS": "В процессе",
+    "COMPLETED": "Завершен",
+    "CANCELLED": "Отменен",
+    "ARCHIVED": "Архивирован"
+  }
+}

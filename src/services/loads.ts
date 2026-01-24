@@ -3,10 +3,14 @@ import { Load, Application } from '../types';
 
 export const loadsService = {
   async getAvailableLoads(): Promise<Load[]> {
-    const response = await api.get<Load[]>('/loads', {
-      params: { status: 'OPEN' },
+    const response = await api.get<{ loads: Load[]; pagination: any }>('/loads', {
+      params: {
+        page: 1,
+        limit: 100,
+      },
     });
-    return response.data;
+    // Backend returns { loads, pagination } structure
+    return response.data.loads || response.data;
   },
 
   async getLoadById(id: string): Promise<Load> {
@@ -15,7 +19,7 @@ export const loadsService = {
   },
 
   async getMyApplications(): Promise<Application[]> {
-    const response = await api.get<Application[]>('/applications/user');
+    const response = await api.get<Application[]>('/applications/my');
     return response.data;
   },
 

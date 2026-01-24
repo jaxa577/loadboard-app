@@ -1,0 +1,127 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "apply": "Apply",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Error",
+    "success": "Success"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "phone": "Phone",
+    "role": "Role",
+    "loginTitle": "Sign In",
+    "registerTitle": "Create Account",
+    "logout": "Logout",
+    "loginError": "Login failed",
+    "registerError": "Registration failed",
+    "verificationTitle": "Verification",
+    "verificationCode": "Verification Code",
+    "enterCode": "Enter the 6-digit code sent to your email"
+  },
+  "roles": {
+    "driver": "Driver",
+    "broker": "Broker",
+    "shipper": "Shipper"
+  },
+  "nav": {
+    "availableLoads": "Available Loads",
+    "applications": "Applications",
+    "history": "History",
+    "chat": "Messages",
+    "profile": "Profile"
+  },
+  "loads": {
+    "availableLoads": "Available Loads",
+    "myApplications": "My Applications",
+    "loadHistory": "Load History",
+    "loadDetails": "Load Details",
+    "noLoads": "No loads available",
+    "searchPlaceholder": "Search by city or cargo type...",
+    "filters": "Filters",
+    "clearFilters": "Clear All",
+    "applyFilters": "Apply Filters",
+    "priceRange": "Price Range",
+    "weightRange": "Weight Range (kg)",
+    "cargoType": "Cargo Type",
+    "originCity": "Origin City",
+    "destinationCity": "Destination City",
+    "min": "Min",
+    "max": "Max",
+    "applyToLoad": "Apply to Load",
+    "applicationSubmitted": "Application Submitted",
+    "shipperWillReview": "The shipper will review your application"
+  },
+  "loadDetails": {
+    "routeInformation": "Route Information",
+    "origin": "Origin",
+    "destination": "Destination",
+    "cargoDetails": "Cargo Details",
+    "type": "Type",
+    "weight": "Weight",
+    "volume": "Volume",
+    "schedule": "Schedule",
+    "loadingDate": "Loading Date",
+    "deliveryDate": "Delivery Date",
+    "shipperInfo": "Shipper Information",
+    "name": "Name",
+    "phone": "Phone",
+    "rating": "Rating"
+  },
+  "journey": {
+    "startJourney": "Start Journey",
+    "pauseJourney": "Pause Journey",
+    "resumeJourney": "Resume Journey",
+    "endJourney": "End Journey",
+    "journeyActive": "Journey Active",
+    "journeyPaused": "Journey Paused",
+    "trackingEnabled": "GPS tracking enabled"
+  },
+  "profile": {
+    "myProfile": "My Profile",
+    "editProfile": "Edit Profile",
+    "personalInfo": "Personal Information",
+    "accountSettings": "Account Settings",
+    "language": "Language",
+    "notifications": "Notifications",
+    "ratings": "Ratings & Reviews"
+  },
+  "chat": {
+    "conversations": "Conversations",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "noMessages": "No messages yet"
+  },
+  "applications": {
+    "myApplications": "My Applications",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "noApplications": "No applications yet"
+  },
+  "truckTypes": {
+    "TENT": "Tent",
+    "REFRIGERATOR": "Refrigerator",
+    "CONTAINER": "Container",
+    "PLATFORM": "Platform",
+    "TANK": "Tank"
+  },
+  "loadStatus": {
+    "OPEN": "Open",
+    "IN_PROGRESS": "In Progress",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled",
+    "ARCHIVED": "Archived"
+  }
+}

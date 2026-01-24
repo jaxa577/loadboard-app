@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -18,7 +17,9 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to track your journey.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to your location even when running in the background to track your journey.",
-        "UIBackgroundModes": ["location"]
+        "UIBackgroundModes": [
+          "location"
+        ]
       }
     },
     "android": {
@@ -27,8 +28,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -38,6 +37,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6b8bff89-eb22-40b1-921d-84b01b194997"
+      }
     }
   }
 }

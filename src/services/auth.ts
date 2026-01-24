@@ -16,25 +16,33 @@ export interface User {
 }
 
 export interface AuthResponse {
-  access_token: string;
+  accessToken: string;
+  refreshToken?: string;
   user: User;
 }
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/login', credentials);
-    const { access_token, user } = response.data;
+    const { accessToken, refreshToken, user } = response.data;
+
+    // Validate token exists
+    if (!accessToken) {
+      throw new Error('No access token received from server');
+    }
 
     // Store token and user data
-    await AsyncStorage.setItem('token', access_token);
+    await AsyncStorage.setItem('token', accessToken);
+    if (refreshToken) {
+      await AsyncStorage.setItem('refreshToken', refreshToken);
+    }
     await AsyncStorage.setItem('user', JSON.stringify(user));
 
     return response.data;
   },
 
   async logout(): Promise<void> {
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('user');
+    await AsyncStorage.multiRemove(['token', 'refreshToken', 'user']);
   },
 
   async getStoredUser(): Promise<User | null> {

@@ -2,8 +2,12 @@ export interface Load {
   id: string;
   originCity: string;
   originRegion: string;
+  originLatitude?: number;
+  originLongitude?: number;
   destinationCity: string;
   destinationRegion: string;
+  destinationLatitude?: number;
+  destinationLongitude?: number;
   cargoType: string;
   weight: number;
   volume?: number;

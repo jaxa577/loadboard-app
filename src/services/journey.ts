@@ -16,7 +16,7 @@ export const journeyService = {
     journeyId: string,
     locationData: LocationData
   ): Promise<void> {
-    await api.post('/locations', {
+    await api.post('/journeys/locations', {
       journeyId,
       ...locationData,
     });

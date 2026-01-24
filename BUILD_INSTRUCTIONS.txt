@@ -1,0 +1,127 @@
+========================================
+HOW TO BUILD APK - SIMPLE STEPS
+========================================
+
+Your Expo Account:
+------------------
+Username: jonyesto
+Password: sG2.rdt,wVs35R2
+
+
+METHOD 1: Step-by-Step (Recommended)
+=====================================
+
+STEP 1: Login to Expo
+----------------------
+Double-click: 1-login.bat
+
+When prompted:
+- Email or username: jonyesto
+- Password: sG2.rdt,wVs35R2
+
+
+STEP 2: Build APK
+-----------------
+Double-click: 2-build-apk.bat
+
+Wait 10-15 minutes for the build to complete.
+
+
+STEP 3: Download APK
+--------------------
+When you see a link like:
+https://expo.dev/artifacts/eas/...
+
+Click it or copy to browser and download the APK file.
+
+
+STEP 4: Install on Phone
+-------------------------
+1. Transfer APK to your phone
+2. Enable "Install from unknown sources" in Settings
+3. Open the APK file
+4. Install it
+5. Done!
+
+
+METHOD 2: One-Click (If Already Logged In)
+===========================================
+
+Double-click: build-apk.bat
+
+This will:
+1. Check if you're logged in
+2. Install dependencies
+3. Start the build
+4. Give you download link
+
+
+METHOD 3: Manual Commands
+==========================
+
+# Login first
+eas login
+Username: jonyesto
+Password: sG2.rdt,wVs35R2
+
+# Then build
+cd clb-mobile-driver
+npm install
+eas build --platform android --profile preview
+
+# Wait for download link
+
+
+ALTERNATIVE: Quick Testing (No Build)
+======================================
+
+For instant testing without building APK:
+
+1. Install "Expo Go" app from Play Store
+2. Double-click: start-dev.bat
+3. Scan QR code with Expo Go
+4. App loads instantly!
+
+
+TROUBLESHOOTING
+===============
+
+Problem: "Not logged in"
+Solution: Run 1-login.bat first
+
+Problem: "Command not found"
+Solution: npm install -g eas-cli
+
+Problem: Build fails
+Solution: Check internet connection, try again
+
+Problem: APK won't install
+Solution: Enable "Unknown sources" in Android Settings > Security
+
+
+WHAT YOU'LL GET
+===============
+
+APK File:
+- Size: ~50-80 MB
+- Name: clb-driver-xxx.apk
+- Works on any Android device
+- No Play Store needed
+
+Test Account:
+- Email: driver1@example.com
+- Password: password123
+
+
+NEXT STEPS
+==========
+
+1. Run: 1-login.bat
+2. Run: 2-build-apk.bat
+3. Wait for download link
+4. Download APK
+5. Install on phone
+6. Test the app!
+
+
+Need help? Check BUILD_APK_GUIDE.md or QUICK_START.md
