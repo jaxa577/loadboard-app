@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Загрузка...",
+    "loadingMore": "Загружаем ещё...",
     "save": "Сохранить",
     "cancel": "Отмена",
     "submit": "Отправить",
@@ -9,7 +10,19 @@
     "yes": "Да",
     "no": "Нет",
     "error": "Ошибка",
-    "success": "Успешно"
+    "success": "Успешно",
+    "retry": "Повторить",
+    "unknown": "Неизвестно"
+  },
+  "errors": {
+    "error": "Ошибка",
+    "authError": "Ошибка авторизации",
+    "sessionExpired": "Ваша сессия истекла. Пожалуйста, войдите снова.",
+    "fetchFailed": "Не удалось загрузить данные. Попробуйте ещё раз."
+  },
+  "units": {
+    "kg": "кг",
+    "tons": "т"
   },
   "auth": {
     "login": "Вход",
@@ -39,6 +52,32 @@
     "history": "История",
     "chat": "Сообщения",
     "profile": "Профиль"
+  },
+  "load": {
+    "totalLoads": "Всего грузов",
+    "searchPlaceholder": "Поиск по городу, грузу или ID...",
+    "noLoads": "Грузы не найдены",
+    "adjustFilters": "Попробуйте изменить поиск или фильтры",
+    "checkLater": "Загляните позже за новыми грузами",
+    "cargo": "Груз",
+    "weight": "Вес",
+    "loading": "Погрузка",
+    "delivery": "Доставка"
+  },
+  "filter": {
+    "title": "Фильтры",
+    "priceRange": "Диапазон цен",
+    "weightRange": "Диапазон веса (кг)",
+    "cargoType": "Тип груза",
+    "cargoTypePlaceholder": "например, Электроника, Продукты",
+    "originCity": "Город отправления",
+    "originCityPlaceholder": "например, Москва",
+    "destinationCity": "Город назначения",
+    "destinationCityPlaceholder": "например, Алматы",
+    "min": "Мин",
+    "max": "Макс",
+    "clearAll": "Очистить все",
+    "apply": "Применить"
   },
   "loads": {
     "availableLoads": "Доступные грузы",

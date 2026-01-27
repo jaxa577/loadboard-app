@@ -97,6 +97,9 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
           <Text style={styles.title}>
             {load.originCity} → {load.destinationCity}
           </Text>
+          {load.displayId && (
+            <Text style={styles.loadId}>ID: {load.displayId}</Text>
+          )}
           <Text style={styles.price}>${load.price}</Text>
         </View>
 
@@ -238,7 +241,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 4,
+  },
+  loadId: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2563eb',
     marginBottom: 8,
+    fontFamily: 'monospace',
   },
   price: {
     fontSize: 28,

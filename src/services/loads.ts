@@ -1,16 +1,24 @@
 import api from './api';
-import { Load, Application } from '../types';
+import { Load, Application, PaginationInfo } from '../types';
+
+export interface LoadsResponse {
+  loads: Load[];
+  pagination: PaginationInfo;
+}
 
 export const loadsService = {
-  async getAvailableLoads(): Promise<Load[]> {
-    const response = await api.get<{ loads: Load[]; pagination: any }>('/loads', {
+  async getAvailableLoads(page: number = 1, limit: number = 20): Promise<LoadsResponse> {
+    const response = await api.get<LoadsResponse>('/loads', {
       params: {
-        page: 1,
-        limit: 100,
+        page,
+        limit,
       },
     });
     // Backend returns { loads, pagination } structure
-    return response.data.loads || response.data;
+    return {
+      loads: response.data.loads || [],
+      pagination: response.data.pagination || { page, limit, total: 0, pages: 0 },
+    };
   },
 
   async getLoadById(id: string): Promise<Load> {

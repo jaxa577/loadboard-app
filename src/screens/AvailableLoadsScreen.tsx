@@ -9,10 +9,12 @@ import {
   ActivityIndicator,
   TextInput,
   Modal,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { loadsService } from '../services/loads';
-import { Load } from '../types';
+import { Load, PaginationInfo } from '../types';
 
 interface Props {
   navigation: any;
@@ -29,50 +31,101 @@ interface Filters {
 }
 
 export default function AvailableLoadsScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const [loads, setLoads] = useState<Load[]>([]);
   const [filteredLoads, setFilteredLoads] = useState<Load[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Filters>({});
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    page: 1,
+    limit: 20,
+    total: 0,
+    pages: 0,
+  });
 
   useEffect(() => {
-    fetchLoads();
+    fetchLoads(1, true);
   }, []);
 
-  const fetchLoads = async () => {
+  const fetchLoads = async (page: number = 1, reset: boolean = false) => {
     try {
-      const data = await loadsService.getAvailableLoads();
-      console.log('Fetched loads:', data?.length || 0, 'loads');
-      setLoads(data || []);
-      applyFilters(data || [], searchQuery, filters);
-    } catch (error: any) {
-      console.error('Error fetching loads:', error);
-      console.error('Error details:', error.response?.data || error.message);
+      setError(null);
+      const response = await loadsService.getAvailableLoads(page, 20);
+      console.log('Fetched loads:', response.loads?.length || 0, 'loads, page:', page);
+
+      if (reset) {
+        setLoads(response.loads);
+        applyFilters(response.loads, searchQuery, filters);
+      } else {
+        const newLoads = [...loads, ...response.loads];
+        setLoads(newLoads);
+        applyFilters(newLoads, searchQuery, filters);
+      }
+
+      setPagination(response.pagination);
+    } catch (err: any) {
+      console.error('Error fetching loads:', err);
+      console.error('Error details:', err.response?.data || err.message);
+
+      const errorMessage = err.response?.data?.message || err.message || t('errors.fetchFailed');
+      setError(errorMessage);
+
+      if (err.response?.status === 401) {
+        Alert.alert(
+          t('errors.authError'),
+          t('errors.sessionExpired'),
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert(
+          t('errors.error'),
+          errorMessage,
+          [{ text: 'OK' }]
+        );
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setLoadingMore(false);
     }
   };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchLoads();
+    fetchLoads(1, true);
   }, []);
+
+  const loadMore = useCallback(() => {
+    if (loadingMore || pagination.page >= pagination.pages) return;
+
+    setLoadingMore(true);
+    fetchLoads(pagination.page + 1, false);
+  }, [loadingMore, pagination, loads]);
 
   const applyFilters = (data: Load[], search: string, activeFilters: Filters) => {
     let result = [...data];
 
-    // Search filter
+    // Search filter - with null safety
     if (search.trim()) {
       const query = search.toLowerCase();
-      result = result.filter(
-        (load) =>
-          load.originCity.toLowerCase().includes(query) ||
-          load.destinationCity.toLowerCase().includes(query) ||
-          load.cargoType.toLowerCase().includes(query)
-      );
+      result = result.filter((load) => {
+        const originCity = load.originCity?.toLowerCase() || '';
+        const destinationCity = load.destinationCity?.toLowerCase() || '';
+        const cargoType = load.cargoType?.toLowerCase() || '';
+        const displayId = load.displayId?.toLowerCase() || '';
+
+        return (
+          originCity.includes(query) ||
+          destinationCity.includes(query) ||
+          cargoType.includes(query) ||
+          displayId.includes(query)
+        );
+      });
     }
 
     // Price filters
@@ -91,24 +144,24 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
       result = result.filter((load) => load.weight <= (activeFilters.maxWeight || Infinity));
     }
 
-    // Cargo type filter
+    // Cargo type filter - with null safety
     if (activeFilters.cargoType) {
       result = result.filter((load) =>
-        load.cargoType.toLowerCase().includes(activeFilters.cargoType!.toLowerCase())
+        (load.cargoType?.toLowerCase() || '').includes(activeFilters.cargoType!.toLowerCase())
       );
     }
 
-    // Origin city filter
+    // Origin city filter - with null safety
     if (activeFilters.originCity) {
       result = result.filter((load) =>
-        load.originCity.toLowerCase().includes(activeFilters.originCity!.toLowerCase())
+        (load.originCity?.toLowerCase() || '').includes(activeFilters.originCity!.toLowerCase())
       );
     }
 
-    // Destination city filter
+    // Destination city filter - with null safety
     if (activeFilters.destinationCity) {
       result = result.filter((load) =>
-        load.destinationCity.toLowerCase().includes(activeFilters.destinationCity!.toLowerCase())
+        (load.destinationCity?.toLowerCase() || '').includes(activeFilters.destinationCity!.toLowerCase())
       );
     }
 
@@ -143,9 +196,19 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
 
   const formatWeight = (weightKg: number) => {
     if (weightKg >= 1000) {
-      return `${(weightKg / 1000).toFixed(1)} т`;
+      return `${(weightKg / 1000).toFixed(1)} ${t('units.tons')}`;
     }
-    return `${weightKg} кг`;
+    return `${weightKg} ${t('units.kg')}`;
+  };
+
+  const formatPrice = (price: number, currency: string = 'USD') => {
+    const symbols: Record<string, string> = {
+      USD: '$',
+      EUR: '€',
+      RUB: '₽',
+      KZT: '₸',
+    };
+    return `${symbols[currency] || currency}${price.toLocaleString()}`;
   };
 
   const renderLoadCard = ({ item }: { item: Load }) => (
@@ -154,29 +217,34 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
       onPress={() => navigation.navigate('LoadDetails', { loadId: item.id })}
     >
       <View style={styles.cardHeader}>
-        <Text style={styles.route}>
-          {item.originCity} → {item.destinationCity}
-        </Text>
-        <Text style={styles.price}>${item.price}</Text>
+        <View style={styles.routeContainer}>
+          <Text style={styles.route}>
+            {item.originCity || t('common.unknown')} → {item.destinationCity || t('common.unknown')}
+          </Text>
+          {item.displayId && (
+            <Text style={styles.loadId}>ID: {item.displayId}</Text>
+          )}
+        </View>
+        <Text style={styles.price}>{formatPrice(item.price, item.currency)}</Text>
       </View>
 
       <View style={styles.cardDetails}>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Cargo:</Text>
-          <Text style={styles.detailValue}>{item.cargoType}</Text>
+          <Text style={styles.detailLabel}>{t('load.cargo')}:</Text>
+          <Text style={styles.detailValue}>{item.cargoType || '-'}</Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Weight:</Text>
+          <Text style={styles.detailLabel}>{t('load.weight')}:</Text>
           <Text style={styles.detailValue}>{formatWeight(item.weight)}</Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Loading:</Text>
+          <Text style={styles.detailLabel}>{t('load.loading')}:</Text>
           <Text style={styles.detailValue}>
             {new Date(item.loadingDate).toLocaleDateString()}
           </Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Delivery:</Text>
+          <Text style={styles.detailLabel}>{t('load.delivery')}:</Text>
           <Text style={styles.detailValue}>
             {new Date(item.deliveryDate).toLocaleDateString()}
           </Text>
@@ -194,6 +262,16 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
     </TouchableOpacity>
   );
 
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color="#2563eb" />
+        <Text style={styles.footerText}>{t('common.loadingMore')}</Text>
+      </View>
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -204,13 +282,20 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
+      {/* Total Count Header */}
+      <View style={styles.totalHeader}>
+        <Text style={styles.totalText}>
+          {t('load.totalLoads')}: {pagination.total}
+        </Text>
+      </View>
+
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
           <Ionicons name="search-outline" size={20} color="#999" />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search by city or cargo type..."
+            placeholder={t('load.searchPlaceholder')}
             value={searchQuery}
             onChangeText={handleSearch}
           />
@@ -233,6 +318,17 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
+      {/* Error Message */}
+      {error && (
+        <View style={styles.errorContainer}>
+          <Ionicons name="warning-outline" size={20} color="#dc2626" />
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity onPress={() => fetchLoads(1, true)}>
+            <Text style={styles.retryText}>{t('common.retry')}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Loads List */}
       <FlatList
         data={filteredLoads}
@@ -242,14 +338,17 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="cube-outline" size={64} color="#d1d5db" />
-            <Text style={styles.emptyText}>No loads found</Text>
+            <Text style={styles.emptyText}>{t('load.noLoads')}</Text>
             <Text style={styles.emptySubtext}>
               {searchQuery || getActiveFilterCount() > 0
-                ? 'Try adjusting your search or filters'
-                : 'Check back later for new loads'}
+                ? t('load.adjustFilters')
+                : t('load.checkLater')}
             </Text>
           </View>
         }
@@ -265,7 +364,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Filters</Text>
+              <Text style={styles.modalTitle}>{t('filter.title')}</Text>
               <TouchableOpacity onPress={() => setShowFilters(false)}>
                 <Ionicons name="close" size={28} color="#333" />
               </TouchableOpacity>
@@ -273,11 +372,11 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
 
             {/* Filter Inputs */}
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Price Range</Text>
+              <Text style={styles.filterLabel}>{t('filter.priceRange')}</Text>
               <View style={styles.filterRow}>
                 <TextInput
                   style={styles.filterInput}
-                  placeholder="Min"
+                  placeholder={t('filter.min')}
                   keyboardType="numeric"
                   value={filters.minPrice?.toString() || ''}
                   onChangeText={(text) => handleFilterChange('minPrice', text)}
@@ -285,7 +384,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
                 <Text style={styles.filterSeparator}>-</Text>
                 <TextInput
                   style={styles.filterInput}
-                  placeholder="Max"
+                  placeholder={t('filter.max')}
                   keyboardType="numeric"
                   value={filters.maxPrice?.toString() || ''}
                   onChangeText={(text) => handleFilterChange('maxPrice', text)}
@@ -294,11 +393,11 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Weight Range (kg)</Text>
+              <Text style={styles.filterLabel}>{t('filter.weightRange')}</Text>
               <View style={styles.filterRow}>
                 <TextInput
                   style={styles.filterInput}
-                  placeholder="Min"
+                  placeholder={t('filter.min')}
                   keyboardType="numeric"
                   value={filters.minWeight?.toString() || ''}
                   onChangeText={(text) => handleFilterChange('minWeight', text)}
@@ -306,7 +405,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
                 <Text style={styles.filterSeparator}>-</Text>
                 <TextInput
                   style={styles.filterInput}
-                  placeholder="Max"
+                  placeholder={t('filter.max')}
                   keyboardType="numeric"
                   value={filters.maxWeight?.toString() || ''}
                   onChangeText={(text) => handleFilterChange('maxWeight', text)}
@@ -315,30 +414,30 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Cargo Type</Text>
+              <Text style={styles.filterLabel}>{t('filter.cargoType')}</Text>
               <TextInput
                 style={styles.filterInputFull}
-                placeholder="e.g., Electronics, Food"
+                placeholder={t('filter.cargoTypePlaceholder')}
                 value={filters.cargoType || ''}
                 onChangeText={(text) => handleFilterChange('cargoType', text)}
               />
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Origin City</Text>
+              <Text style={styles.filterLabel}>{t('filter.originCity')}</Text>
               <TextInput
                 style={styles.filterInputFull}
-                placeholder="e.g., Moscow"
+                placeholder={t('filter.originCityPlaceholder')}
                 value={filters.originCity || ''}
                 onChangeText={(text) => handleFilterChange('originCity', text)}
               />
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Destination City</Text>
+              <Text style={styles.filterLabel}>{t('filter.destinationCity')}</Text>
               <TextInput
                 style={styles.filterInputFull}
-                placeholder="e.g., St. Petersburg"
+                placeholder={t('filter.destinationCityPlaceholder')}
                 value={filters.destinationCity || ''}
                 onChangeText={(text) => handleFilterChange('destinationCity', text)}
               />
@@ -350,13 +449,13 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
                 style={[styles.modalButton, styles.clearButton]}
                 onPress={clearFilters}
               >
-                <Text style={styles.clearButtonText}>Clear All</Text>
+                <Text style={styles.clearButtonText}>{t('filter.clearAll')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.applyButton]}
                 onPress={applyActiveFilters}
               >
-                <Text style={styles.applyButtonText}>Apply Filters</Text>
+                <Text style={styles.applyButtonText}>{t('filter.apply')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -376,6 +475,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  totalHeader: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  totalText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2563eb',
+  },
   list: {
     padding: 16,
   },
@@ -393,14 +504,24 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 12,
+  },
+  routeContainer: {
+    flex: 1,
+    marginRight: 12,
   },
   route: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    flex: 1,
+  },
+  loadId: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#2563eb',
+    marginTop: 4,
+    fontFamily: 'monospace',
   },
   price: {
     fontSize: 24,
@@ -507,6 +628,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fef2f2',
+    padding: 12,
+    gap: 8,
+  },
+  errorText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#dc2626',
+  },
+  retryText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2563eb',
+  },
+  footerLoader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
+    gap: 8,
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#666',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -535,7 +684,6 @@ const styles = StyleSheet.create({
   },
   filterLabel: {
     fontSize: 16,
-    color: '#333',
     fontWeight: '600',
     color: '#333',
     marginBottom: 8,
@@ -562,7 +710,6 @@ const styles = StyleSheet.create({
   },
   filterSeparator: {
     fontSize: 16,
-    color: '#333',
     color: '#999',
   },
   modalActions: {
@@ -582,9 +729,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   clearButtonText: {
-    color: '#666',
-    fontSize: 16,
     color: '#333',
+    fontSize: 16,
     fontWeight: '600',
   },
   applyButton: {
@@ -593,7 +739,6 @@ const styles = StyleSheet.create({
   applyButtonText: {
     color: '#fff',
     fontSize: 16,
-    color: '#333',
     fontWeight: '600',
   },
 });
