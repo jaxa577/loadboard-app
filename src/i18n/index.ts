@@ -12,38 +12,12 @@ import uz from './locales/uz.json';
 
 const LANGUAGE_STORAGE_KEY = '@app_language';
 
-// Language detector for AsyncStorage
-const languageDetector = {
-  type: 'languageDetector' as const,
-  async: true,
-  detect: async (callback: (lang: string) => void) => {
-    try {
-      const savedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (savedLanguage) {
-        callback(savedLanguage);
-      } else {
-        callback('en'); // Default language
-      }
-    } catch (error) {
-      console.error('Error detecting language:', error);
-      callback('en');
-    }
-  },
-  init: () => {},
-  cacheUserLanguage: async (language: string) => {
-    try {
-      await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-    } catch (error) {
-      console.error('Error caching language:', error);
-    }
-  },
-};
-
+// Initialize i18n synchronously first with default language
 i18n
-  .use(languageDetector as any)
   .use(initReactI18next)
   .init({
     compatibilityJSON: 'v3',
+    lng: 'ru', // Default language
     fallbackLng: 'en',
     resources: {
       en: { translation: en },
@@ -62,12 +36,31 @@ i18n
     },
   });
 
+// Load saved language asynchronously after init
+const loadSavedLanguage = async () => {
+  try {
+    const savedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      await i18n.changeLanguage(savedLanguage);
+    }
+  } catch (error) {
+    console.error('Error loading saved language:', error);
+  }
+};
+
+// Load saved language in the background
+loadSavedLanguage();
+
 export default i18n;
 
 // Helper function to change language
 export const changeLanguage = async (language: string) => {
-  await i18n.changeLanguage(language);
-  await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  try {
+    await i18n.changeLanguage(language);
+    await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch (error) {
+    console.error('Error changing language:', error);
+  }
 };
 
 // Available languages
