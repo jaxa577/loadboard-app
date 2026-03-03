@@ -30,11 +30,11 @@ export default function ChatListScreen() {
 
   const fetchConversations = async () => {
     try {
-      // For now, we'll create a mock implementation
-      // In production, this would fetch from API
-      setConversations([]);
+      const response = await api.get('/chat');
+      setConversations(response.data || []);
     } catch (error) {
       console.error('Error fetching conversations:', error);
+      setConversations([]);
     } finally {
       setLoading(false);
       setRefreshing(false);

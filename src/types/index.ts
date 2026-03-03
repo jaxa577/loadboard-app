@@ -1,5 +1,6 @@
 export interface Load {
   id: string;
+  displayId?: string;
   originCity: string;
   originRegion: string;
   originLatitude?: number;

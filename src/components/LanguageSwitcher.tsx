@@ -1,14 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { LANGUAGES, changeLanguage } from '../i18n';
+
+const LANGUAGES = [
+  { code: 'en', nativeName: 'English' },
+  { code: 'ru', nativeName: 'Русский' },
+  { code: 'uz', nativeName: 'Oʻzbekcha' },
+];
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const currentLanguage = i18n.language;
 
-  const handleLanguageChange = async (languageCode: string) => {
-    await changeLanguage(languageCode);
+  const handleLanguageChange = (languageCode: string) => {
+    i18n.changeLanguage(languageCode);
   };
 
   return (

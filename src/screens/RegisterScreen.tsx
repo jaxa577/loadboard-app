@@ -12,16 +12,19 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'DRIVER' as 'DRIVER' | 'BROKER' | 'SHIPPER', // Default to Driver
   });
   const [loading, setLoading] = useState(false);
 
@@ -68,7 +71,7 @@ export default function RegisterScreen() {
         phone: formData.phone,
         email: formData.email || undefined,
         password: formData.password,
-        role: 'driver',
+        role: formData.role, // Use selected role instead of hardcoding 'driver'
       };
 
       await api.post('/auth/register', registerData);
@@ -96,31 +99,59 @@ export default function RegisterScreen() {
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Register as a driver</Text>
+          <Text style={styles.title}>{t('auth.registerTitle')}</Text>
+          <Text style={styles.subtitle}>Join as a Driver, Broker, or Shipper</Text>
+
+          <View style={styles.roleSelector}>
+            {(['DRIVER', 'BROKER', 'SHIPPER'] as const).map((role) => (
+              <TouchableOpacity
+                key={role}
+                style={[
+                  styles.roleOption,
+                  formData.role === role && styles.roleOptionSelected,
+                ]}
+                onPress={() => updateField('role', role)}
+              >
+                <Text
+                  style={[
+                    styles.roleText,
+                    formData.role === role && styles.roleTextSelected,
+                  ]}
+                >
+                  {t(`roles.${role.toLowerCase()}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
           <View style={styles.form}>
+            <Text style={styles.label}>{t('auth.name')} *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Full Name *"
+              placeholder="e.g. John Doe"
+              placeholderTextColor="#9ca3af"
               value={formData.name}
               onChangeText={(text) => updateField('name', text)}
               autoCapitalize="words"
               editable={!loading}
             />
 
+            <Text style={styles.label}>{t('auth.phone')} *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Phone Number *"
+              placeholder="+1234567890"
+              placeholderTextColor="#9ca3af"
               value={formData.phone}
               onChangeText={(text) => updateField('phone', text)}
               keyboardType="phone-pad"
               editable={!loading}
             />
 
+            <Text style={styles.label}>{t('auth.email')} ({t('common.optional') || 'Optional'})</Text>
             <TextInput
               style={styles.input}
-              placeholder="Email (optional)"
+              placeholder="you@example.com"
+              placeholderTextColor="#9ca3af"
               value={formData.email}
               onChangeText={(text) => updateField('email', text)}
               autoCapitalize="none"
@@ -128,18 +159,22 @@ export default function RegisterScreen() {
               editable={!loading}
             />
 
+            <Text style={styles.label}>{t('auth.password')} *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Password *"
+              placeholder="Min 6 characters"
+              placeholderTextColor="#9ca3af"
               value={formData.password}
               onChangeText={(text) => updateField('password', text)}
               secureTextEntry
               editable={!loading}
             />
 
+            <Text style={styles.label}>{t('auth.password')} (Confirm) *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Confirm Password *"
+              placeholder="Repeat password"
+              placeholderTextColor="#9ca3af"
               value={formData.confirmPassword}
               onChangeText={(text) => updateField('confirmPassword', text)}
               secureTextEntry
@@ -154,7 +189,7 @@ export default function RegisterScreen() {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Register</Text>
+                <Text style={styles.buttonText}>{t('auth.register')}</Text>
               )}
             </TouchableOpacity>
 
@@ -164,7 +199,7 @@ export default function RegisterScreen() {
               disabled={loading}
             >
               <Text style={styles.linkText}>
-                Already have an account? Login
+                {t('auth.alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -196,7 +231,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#333',
     color: '#666',
     marginBottom: 32,
     textAlign: 'center',
@@ -213,6 +247,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
     color: '#333',
+  },
+  label: {
+    fontSize: 14,
+    color: '#4b5563',
+    marginBottom: 6,
+    fontWeight: '500',
   },
   button: {
     backgroundColor: '#2563eb',
@@ -236,7 +276,33 @@ const styles = StyleSheet.create({
   linkText: {
     color: '#2563eb',
     fontSize: 16,
-    color: '#333',
     fontWeight: '500',
+  },
+  roleSelector: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  roleOption: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+  roleOptionSelected: {
+    backgroundColor: '#2563eb',
+  },
+  roleText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+  },
+  roleTextSelected: {
+    color: '#fff',
   },
 });

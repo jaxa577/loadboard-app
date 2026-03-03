@@ -89,13 +89,9 @@ export default function LoginScreen() {
           disabled={loading}
         >
           <Text style={styles.registerText}>
-            Don't have an account? <Text style={styles.registerTextBold}>Sign Up</Text>
+            {t('auth.dontHaveAccount')}
           </Text>
         </TouchableOpacity>
-
-        <Text style={styles.note}>
-          This app is for drivers only. Shippers and brokers should use the web platform.
-        </Text>
       </View>
     </KeyboardAvoidingView>
   );
@@ -120,7 +116,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#333',
     color: '#666',
     marginBottom: 48,
     textAlign: 'center',
@@ -159,18 +154,10 @@ const styles = StyleSheet.create({
   },
   registerText: {
     fontSize: 16,
-    color: '#333',
     color: '#666',
   },
   registerTextBold: {
     color: '#2563eb',
     fontWeight: '600',
-  },
-  note: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    fontStyle: 'italic',
-    marginTop: 16,
   },
 });

@@ -125,7 +125,7 @@ export default function ProfileScreen() {
       {/* Profile Form */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Profile Information</Text>
+          <Text style={styles.sectionTitle}>{t('profile.profile')}</Text>
           {!isEditing && (
             <TouchableOpacity
               onPress={() => setIsEditing(true)}
@@ -137,7 +137,7 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Full Name</Text>
+          <Text style={styles.label}>{t('auth.name')}</Text>
           <TextInput
             style={[styles.input, !isEditing && styles.inputDisabled]}
             value={formData.name}
@@ -148,7 +148,7 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Phone Number</Text>
+          <Text style={styles.label}>{t('auth.phone')}</Text>
           <TextInput
             style={[styles.input, !isEditing && styles.inputDisabled]}
             value={formData.phone}
@@ -160,7 +160,7 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Email (optional)</Text>
+          <Text style={styles.label}>{t('auth.email')} ({t('common.optional') || 'optional'})</Text>
           <TextInput
             style={[styles.input, !isEditing && styles.inputDisabled]}
             value={formData.email}
@@ -179,7 +179,7 @@ export default function ProfileScreen() {
               onPress={handleCancel}
               disabled={loading}
             >
-              <Text style={styles.buttonCancelText}>Cancel</Text>
+              <Text style={styles.buttonCancelText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.buttonSave]}
@@ -189,7 +189,7 @@ export default function ProfileScreen() {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonSaveText}>Save</Text>
+                <Text style={styles.buttonSaveText}>{t('common.save')}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -204,8 +204,6 @@ export default function ProfileScreen() {
 
       {/* Account Actions */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-
         <TouchableOpacity
           style={styles.actionButton}
           onPress={() => (navigation as any).navigate('Verification')}
@@ -229,7 +227,7 @@ export default function ProfileScreen() {
           onPress={() => (navigation as any).navigate('Ratings')}
         >
           <Ionicons name="star-outline" size={24} color="#666" />
-          <Text style={styles.actionText}>Ratings</Text>
+          <Text style={styles.actionText}>{t('profile.rating')}s</Text>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
 
@@ -238,7 +236,7 @@ export default function ProfileScreen() {
           onPress={handleLogout}
         >
           <Ionicons name="log-out-outline" size={24} color="#dc2626" />
-          <Text style={[styles.actionText, styles.logoutText]}>Logout</Text>
+          <Text style={[styles.actionText, styles.logoutText]}>{t('nav.logout')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -313,7 +311,6 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     color: '#333',
-    color: '#333',
   },
   inputDisabled: {
     backgroundColor: '#f9f9f9',
@@ -336,9 +333,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   buttonCancelText: {
-    color: '#666',
-    fontSize: 16,
     color: '#333',
+    fontSize: 16,
     fontWeight: '600',
   },
   buttonSave: {
@@ -360,7 +356,6 @@ const styles = StyleSheet.create({
   actionText: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
     color: '#333',
     marginLeft: 12,
   },

@@ -11,6 +11,8 @@ import {
   Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { loadsService } from '../services/loads';
 import { Load } from '../types';
 
@@ -36,6 +38,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Filters>({});
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchLoads();
@@ -154,31 +157,34 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
       onPress={() => navigation.navigate('LoadDetails', { loadId: item.id })}
     >
       <View style={styles.cardHeader}>
-        <Text style={styles.route}>
-          {item.originCity} → {item.destinationCity}
-        </Text>
+        <View>
+          <Text style={styles.route}>
+            {item.originCity} → {item.destinationCity}
+          </Text>
+          <Text style={styles.idText}>ID: {item.displayId || item.id.slice(-6)}</Text>
+        </View>
         <Text style={styles.price}>${item.price}</Text>
       </View>
 
       <View style={styles.cardDetails}>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Cargo:</Text>
+          <Text style={styles.detailLabel}>{t('load.cargoType')}:</Text>
           <Text style={styles.detailValue}>{item.cargoType}</Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Weight:</Text>
+          <Text style={styles.detailLabel}>{t('load.weight')}:</Text>
           <Text style={styles.detailValue}>{formatWeight(item.weight)}</Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Loading:</Text>
+          <Text style={styles.detailLabel}>{t('load.posted')}:</Text>
           <Text style={styles.detailValue}>
-            {new Date(item.loadingDate).toLocaleDateString()}
+            {item.createdAt ? formatDistanceToNow(new Date(item.createdAt), { addSuffix: true }) : t('time.recently')}
           </Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Delivery:</Text>
+          <Text style={styles.detailLabel}>{t('load.loadingDate')}:</Text>
           <Text style={styles.detailValue}>
-            {new Date(item.deliveryDate).toLocaleDateString()}
+            {new Date(item.loadingDate).toLocaleDateString()}
           </Text>
         </View>
       </View>
@@ -210,7 +216,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
           <Ionicons name="search-outline" size={20} color="#999" />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search by city or cargo type..."
+            placeholder={t('common.search')}
             value={searchQuery}
             onChangeText={handleSearch}
           />
@@ -233,6 +239,10 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
+      <Text style={styles.activeCounter}>
+        {filteredLoads.length} {t('load.status.active')} {t('load.loads')}
+      </Text>
+
       {/* Loads List */}
       <FlatList
         data={filteredLoads}
@@ -245,11 +255,11 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="cube-outline" size={64} color="#d1d5db" />
-            <Text style={styles.emptyText}>No loads found</Text>
+            <Text style={styles.emptyText}>{t('load.noLoads')}</Text>
             <Text style={styles.emptySubtext}>
               {searchQuery || getActiveFilterCount() > 0
-                ? 'Try adjusting your search or filters'
-                : 'Check back later for new loads'}
+                ? t('common.search')
+                : t('load.noLoads')}
             </Text>
           </View>
         }
@@ -273,7 +283,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
 
             {/* Filter Inputs */}
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Price Range</Text>
+              <Text style={styles.filterLabel}>{t('load.price')}</Text>
               <View style={styles.filterRow}>
                 <TextInput
                   style={styles.filterInput}
@@ -294,7 +304,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Weight Range (kg)</Text>
+              <Text style={styles.filterLabel}>{t('load.weight')}</Text>
               <View style={styles.filterRow}>
                 <TextInput
                   style={styles.filterInput}
@@ -315,30 +325,27 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Cargo Type</Text>
+              <Text style={styles.filterLabel}>{t('load.cargoType')}</Text>
               <TextInput
                 style={styles.filterInputFull}
-                placeholder="e.g., Electronics, Food"
                 value={filters.cargoType || ''}
                 onChangeText={(text) => handleFilterChange('cargoType', text)}
               />
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Origin City</Text>
+              <Text style={styles.filterLabel}>{t('load.originCity')}</Text>
               <TextInput
                 style={styles.filterInputFull}
-                placeholder="e.g., Moscow"
                 value={filters.originCity || ''}
                 onChangeText={(text) => handleFilterChange('originCity', text)}
               />
             </View>
 
             <View style={styles.filterSection}>
-              <Text style={styles.filterLabel}>Destination City</Text>
+              <Text style={styles.filterLabel}>{t('load.destinationCity')}</Text>
               <TextInput
                 style={styles.filterInputFull}
-                placeholder="e.g., St. Petersburg"
                 value={filters.destinationCity || ''}
                 onChangeText={(text) => handleFilterChange('destinationCity', text)}
               />
@@ -350,13 +357,13 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
                 style={[styles.modalButton, styles.clearButton]}
                 onPress={clearFilters}
               >
-                <Text style={styles.clearButtonText}>Clear All</Text>
+                <Text style={styles.clearButtonText}>Clear</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.applyButton]}
                 onPress={applyActiveFilters}
               >
-                <Text style={styles.applyButtonText}>Apply Filters</Text>
+                <Text style={styles.applyButtonText}>{t('common.apply')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -400,7 +407,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    flex: 1,
+  },
+  idText: {
+    fontSize: 12,
+    color: '#9ca3af',
+    marginTop: 2,
+    fontWeight: '500',
   },
   price: {
     fontSize: 24,
@@ -466,6 +478,14 @@ const styles = StyleSheet.create({
     gap: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
+  },
+  activeCounter: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6b7280',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 4,
   },
   searchInputContainer: {
     flex: 1,
@@ -537,7 +557,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   filterRow: {
@@ -562,7 +581,6 @@ const styles = StyleSheet.create({
   },
   filterSeparator: {
     fontSize: 16,
-    color: '#333',
     color: '#999',
   },
   modalActions: {
@@ -582,9 +600,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   clearButtonText: {
-    color: '#666',
-    fontSize: 16,
     color: '#333',
+    fontSize: 16,
     fontWeight: '600',
   },
   applyButton: {
@@ -593,7 +610,6 @@ const styles = StyleSheet.create({
   applyButtonText: {
     color: '#fff',
     fontSize: 16,
-    color: '#333',
     fontWeight: '600',
   },
 });

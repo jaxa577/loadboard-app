@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -16,12 +17,18 @@ import ChatConversationScreen from '../screens/ChatConversationScreen';
 import LoadHistoryScreen from '../screens/LoadHistoryScreen';
 import RatingsScreen from '../screens/RatingsScreen';
 import VerificationScreen from '../screens/VerificationScreen';
+import PostLoadScreen from '../screens/PostLoadScreen';
+import ManageApplicationsScreen from '../screens/ManageApplicationsScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MainTabs() {
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const isDriver = user?.role === 'DRIVER';
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -30,14 +37,16 @@ function MainTabs() {
 
           if (route.name === 'AvailableLoads') {
             iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'MyLoads') {
+          } else if (route.name === 'MyLoads' || route.name === 'MyPostedLoads') {
             iconName = focused ? 'briefcase' : 'briefcase-outline';
-          } else if (route.name === 'Applications') {
+          } else if (route.name === 'Applications' || route.name === 'ManageApplications') {
             iconName = focused ? 'document-text' : 'document-text-outline';
           } else if (route.name === 'Chat') {
             iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === 'PostLoad') {
+            iconName = focused ? 'add-circle' : 'add-circle-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -46,30 +55,54 @@ function MainTabs() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen
-        name="AvailableLoads"
-        component={AvailableLoadsScreen}
-        options={{ title: 'Available' }}
-      />
-      <Tab.Screen
-        name="MyLoads"
-        component={MyLoadsScreen}
-        options={{ title: 'My Loads' }}
-      />
-      <Tab.Screen
-        name="Applications"
-        component={ApplicationsScreen}
-        options={{ title: 'Applications' }}
-      />
+      {isDriver ? (
+        <>
+          <Tab.Screen
+            name="AvailableLoads"
+            component={AvailableLoadsScreen}
+            options={{ title: t('nav.availableLoads') }}
+          />
+          <Tab.Screen
+            name="MyLoads"
+            component={MyLoadsScreen}
+            options={{ title: t('nav.myLoads') }}
+          />
+          <Tab.Screen
+            name="Applications"
+            component={ApplicationsScreen}
+            options={{ title: t('nav.applications') }}
+          />
+        </>
+      ) : (
+        <>
+          <Tab.Screen
+            name="MyPostedLoads"
+            component={MyLoadsScreen}
+            options={{ title: t('nav.myPostedLoads') }}
+          />
+          <Tab.Screen
+            name="PostLoad"
+            component={PostLoadScreen}
+            options={{ title: t('nav.createLoad') }}
+          />
+          <Tab.Screen
+            name="ManageApplications"
+            component={ManageApplicationsScreen}
+            options={{ title: t('nav.manageApplications') }}
+          />
+        </>
+      )}
+
+      {/* Shared Tabs */}
       <Tab.Screen
         name="Chat"
         component={ChatListScreen}
-        options={{ title: 'Messages' }}
+        options={{ title: t('nav.messages') }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ title: 'Profile' }}
+        options={{ title: t('nav.profile') }}
       />
     </Tab.Navigator>
   );
@@ -77,6 +110,7 @@ function MainTabs() {
 
 export default function AppNavigator() {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
 
   if (loading) {
     return null;
@@ -94,7 +128,7 @@ export default function AppNavigator() {
           <Stack.Screen
             name="Register"
             component={RegisterScreen}
-            options={{ title: 'Create Account' }}
+            options={{ title: t('auth.registerTitle') }}
           />
         </>
       ) : (
@@ -107,7 +141,7 @@ export default function AppNavigator() {
           <Stack.Screen
             name="LoadDetails"
             component={LoadDetailsScreen}
-            options={{ title: 'Load Details' }}
+            options={{ title: t('load.loadDetails') }}
           />
           <Stack.Screen
             name="JourneyControls"
@@ -124,7 +158,6 @@ export default function AppNavigator() {
           <Stack.Screen
             name="LoadHistory"
             component={LoadHistoryScreen}
-            options={{ title: 'Load History' }}
           />
           <Stack.Screen
             name="Ratings"

@@ -9,16 +9,23 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { loadsService } from '../services/loads';
-import { Application } from '../types';
+import { Application, Load } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import api from '../services/api';
 
 interface Props {
   navigation: any;
 }
 
 export default function MyLoadsScreen({ navigation }: Props) {
-  const [applications, setApplications] = useState<Application[]>([]);
+  const { user } = useAuth();
+  const [dataItems, setDataItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { t } = useTranslation();
+  const isDriver = user?.role === 'DRIVER';
 
   useEffect(() => {
     fetchMyLoads();
@@ -26,8 +33,13 @@ export default function MyLoadsScreen({ navigation }: Props) {
 
   const fetchMyLoads = async () => {
     try {
-      const data = await loadsService.getAcceptedLoads();
-      setApplications(data);
+      if (isDriver) {
+        const data = await loadsService.getAcceptedLoads();
+        setDataItems(data);
+      } else {
+        const response = await api.get('/loads/my');
+        setDataItems(response.data);
+      }
     } catch (error) {
       console.error('Error fetching my loads:', error);
     } finally {
@@ -41,69 +53,85 @@ export default function MyLoadsScreen({ navigation }: Props) {
     fetchMyLoads();
   }, []);
 
-  const renderLoadCard = ({ item }: { item: Application }) => {
-    if (!item.load) return null;
+  const renderLoadCard = ({ item }: { item: any }) => {
+    // If Driver, item is an Application involving a load
+    // If Broker/Shipper, item is a Load object directly
+    const load = isDriver ? item.load : item;
 
-    const load = item.load;
+    if (!load) return null;
 
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() =>
-          navigation.navigate('JourneyControls', {
-            loadId: load.id,
-            applicationId: item.id,
-          })
-        }
+        onPress={() => {
+          if (isDriver) {
+             navigation.navigate('JourneyControls', {
+               loadId: load.id,
+               applicationId: item.id,
+             });
+          }
+        }}
+        activeOpacity={isDriver ? 0.7 : 1}
       >
         <View style={styles.cardHeader}>
-          <Text style={styles.route}>
-            {load.originCity} → {load.destinationCity}
-          </Text>
+          <View>
+            <Text style={styles.route}>
+              {load.originCity} → {load.destinationCity}
+            </Text>
+            <Text style={styles.idText}>ID: {load.displayId || load.id.slice(-6)}</Text>
+          </View>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Active</Text>
+            <Text style={styles.statusText}>{load.status || t('load.status.active')}</Text>
           </View>
         </View>
 
         <View style={styles.cardDetails}>
           <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Cargo:</Text>
+            <Text style={styles.detailLabel}>{t('load.cargoType')}:</Text>
             <Text style={styles.detailValue}>{load.cargoType}</Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Weight:</Text>
+            <Text style={styles.detailLabel}>{t('load.weight')}:</Text>
             <Text style={styles.detailValue}>{load.weight} kg</Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Delivery:</Text>
-            <Text style={styles.detailValue}>
-              {new Date(load.deliveryDate).toLocaleDateString()}
-            </Text>
+             <Text style={styles.detailLabel}>{t('load.posted')}:</Text>
+             <Text style={styles.detailValue}>
+               {load.createdAt ? formatDistanceToNow(new Date(load.createdAt), { addSuffix: true }) : t('time.recently')}
+             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Payment:</Text>
+             <Text style={styles.detailLabel}>{t('load.date')}:</Text>
+             <Text style={styles.detailValue}>
+               {new Date(load.loadingDate || load.deliveryDate || Date.now()).toLocaleDateString()}
+             </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t('load.payment')}:</Text>
             <Text style={styles.priceValue}>${load.price}</Text>
           </View>
         </View>
 
-        {load.shipper && (
+        {isDriver && load.shipper && (
           <View style={styles.shipperInfo}>
-            <Text style={styles.shipperName}>Shipper: {load.shipper.name}</Text>
+            <Text style={styles.shipperName}>{t('roles.shipper')}: {load.shipper.name}</Text>
             <Text style={styles.shipperPhone}>{load.shipper.phone}</Text>
           </View>
         )}
 
-        <TouchableOpacity
-          style={styles.startButton}
-          onPress={() =>
-            navigation.navigate('JourneyControls', {
-              loadId: load.id,
-              applicationId: item.id,
-            })
-          }
-        >
-          <Text style={styles.startButtonText}>Start Journey →</Text>
-        </TouchableOpacity>
+        {isDriver && (
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={() =>
+              navigation.navigate('JourneyControls', {
+                loadId: load.id,
+                applicationId: item.id,
+              })
+            }
+          >
+            <Text style={styles.startButtonText}>{t('load.startJourney')} →</Text>
+          </TouchableOpacity>
+        )}
       </TouchableOpacity>
     );
   };
@@ -118,8 +146,11 @@ export default function MyLoadsScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.activeCounter}>
+        {dataItems.length} {t('load.status.active')} {t('load.loads')}
+      </Text>
       <FlatList
-        data={applications}
+        data={dataItems}
         renderItem={renderLoadCard}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
@@ -128,9 +159,9 @@ export default function MyLoadsScreen({ navigation }: Props) {
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>No active loads</Text>
+            <Text style={styles.emptyText}>{t('load.noActiveLoads')}</Text>
             <Text style={styles.emptySubtext}>
-              Apply to available loads to get started
+              {t('load.applyToStart')}
             </Text>
           </View>
         }
@@ -173,7 +204,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    flex: 1,
+  },
+  idText: {
+    fontSize: 12,
+    color: '#9ca3af',
+    marginTop: 2,
+    fontWeight: '500',
   },
   statusBadge: {
     backgroundColor: '#10b981',
@@ -249,5 +285,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#aaa',
     textAlign: 'center',
+  },
+  activeCounter: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6b7280',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 4,
   },
 });

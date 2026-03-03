@@ -37,10 +37,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const { user: userData } = await authService.login({ email, password });
 
-      // Only allow drivers to use the mobile app
-      if (userData.role !== 'DRIVER') {
+      // Allow DRIVER, BROKER, and SHIPPER to use the mobile app
+      if (!['DRIVER', 'BROKER', 'SHIPPER'].includes(userData.role)) {
         await authService.logout();
-        throw new Error('Only drivers can use this application');
+        throw new Error('Unauthorized role');
       }
 
       setUser(userData);

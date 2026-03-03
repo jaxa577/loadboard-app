@@ -37,7 +37,7 @@ export default function ChatConversationScreen() {
 
   const fetchMessages = async () => {
     try {
-      const response = await api.get(`/messages/conversation/${userId}`);
+      const response = await api.get(`/chat/${userId}`);
       setMessages(response.data);
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -85,7 +85,7 @@ export default function ChatConversationScreen() {
     setSending(true);
 
     try {
-      const response = await api.post('/messages', {
+      const response = await api.post('/chat/send', {
         receiverId: userId,
         content: messageContent,
       });

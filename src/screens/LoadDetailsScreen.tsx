@@ -10,6 +10,8 @@ import {
   Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { loadsService } from '../services/loads';
 import { Load } from '../types';
 
@@ -24,6 +26,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     fetchLoadDetails();
@@ -40,7 +43,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
       setHasApplied(applied);
     } catch (error) {
       console.error('Error fetching load:', error);
-      Alert.alert('Error', 'Failed to load details');
+      Alert.alert(t('common.error'), t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -53,16 +56,16 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
       [
         { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Apply',
+          text: t('common.apply'),
           onPress: async () => {
             setApplying(true);
             try {
               await loadsService.applyToLoad(loadId);
               setHasApplied(true);
-              Alert.alert('Success', 'Application submitted successfully');
+              Alert.alert(t('common.success'), t('common.success'));
             } catch (error: any) {
               Alert.alert(
-                'Error',
+                t('common.error'),
                 error.response?.data?.message || 'Failed to apply'
               );
             } finally {
@@ -85,7 +88,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
   if (!load) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.errorText}>Load not found</Text>
+        <Text style={styles.errorText}>{t('load.loadNotFound')}</Text>
       </View>
     );
   }
@@ -94,22 +97,25 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
     <View style={styles.container}>
       <ScrollView style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>
-            {load.originCity} → {load.destinationCity}
-          </Text>
+          <View>
+            <Text style={styles.title}>
+              {load.originCity} → {load.destinationCity}
+            </Text>
+            <Text style={styles.idText}>ID: {load.displayId || load.id.slice(-6)}</Text>
+          </View>
           <Text style={styles.price}>${load.price}</Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Route Information</Text>
+          <Text style={styles.sectionTitle}>{t('load.routeInfo')}</Text>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Origin:</Text>
+            <Text style={styles.label}>{t('load.origin')}:</Text>
             <Text style={styles.value}>
               {load.originCity}, {load.originRegion}
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Destination:</Text>
+            <Text style={styles.label}>{t('load.destination')}:</Text>
             <Text style={styles.value}>
               {load.destinationCity}, {load.destinationRegion}
             </Text>
@@ -117,13 +123,13 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Cargo Details</Text>
+          <Text style={styles.sectionTitle}>{t('load.cargoDetails')}</Text>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Type:</Text>
+            <Text style={styles.label}>{t('load.cargoType')}:</Text>
             <Text style={styles.value}>{load.cargoType}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Weight:</Text>
+            <Text style={styles.label}>{t('load.weight')}:</Text>
             <Text style={styles.value}>{load.weight >= 1000 ? `${(load.weight / 1000).toFixed(1)} т` : `${load.weight} кг`}</Text>
           </View>
           {load.volume && (
@@ -135,11 +141,17 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Schedule</Text>
+          <Text style={styles.sectionTitle}>{t('load.schedule')}</Text>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Loading Date:</Text>
+            <Text style={styles.label}>{t('load.posted')}:</Text>
             <Text style={styles.value}>
-              {new Date(load.loadingDate).toLocaleDateString('en-US', {
+              {load.createdAt ? formatDistanceToNow(new Date(load.createdAt), { addSuffix: true }) : t('time.recently')}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>{t('load.loadingDate')}:</Text>
+            <Text style={styles.value}>
+              {new Date(load.loadingDate).toLocaleDateString(i18n.language, {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -147,9 +159,9 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Delivery Date:</Text>
+            <Text style={styles.label}>{t('load.deliveryDate')}:</Text>
             <Text style={styles.value}>
-              {new Date(load.deliveryDate).toLocaleDateString('en-US', {
+              {new Date(load.deliveryDate).toLocaleDateString(i18n.language, {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -160,16 +172,20 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
 
         {load.shipper && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Shipper Information</Text>
+            <Text style={styles.sectionTitle}>{t('roles.shipper')} {t('profile.profile')}</Text>
             <View style={styles.infoRow}>
-              <Text style={styles.label}>Name:</Text>
+              <Text style={styles.label}>{t('auth.name')}:</Text>
               <Text style={styles.value}>{load.shipper.name}</Text>
             </View>
-            {load.shipper.phone && (
+            {load.shipper?.phone && (
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Phone:</Text>
+                <Text style={styles.label}>{t('auth.phone')}:</Text>
                 <TouchableOpacity
-                  onPress={() => Linking.openURL(`tel:${load.shipper.phone}`)}
+                  onPress={() => {
+                    if (load.shipper?.phone) {
+                      Linking.openURL(`tel:${load.shipper.phone}`);
+                    }
+                  }}
                   style={styles.phoneButton}
                 >
                   <Ionicons name="call" size={16} color="#2563eb" />
@@ -192,10 +208,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
       <View style={styles.footer}>
         {hasApplied ? (
           <View style={styles.appliedContainer}>
-            <Text style={styles.appliedText}>✓ Application Submitted</Text>
-            <Text style={styles.appliedSubtext}>
-              The shipper will review your application
-            </Text>
+            <Text style={styles.appliedText}>✓ {t('load.applied')}</Text>
           </View>
         ) : (
           <TouchableOpacity
@@ -206,7 +219,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
             {applying ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.applyButtonText}>Apply to Load</Text>
+              <Text style={styles.applyButtonText}>{t('load.apply')}</Text>
             )}
           </TouchableOpacity>
         )}
@@ -229,6 +242,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     backgroundColor: '#fff',
     padding: 20,
     borderBottomWidth: 1,
@@ -238,7 +254,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  idText: {
+    fontSize: 14,
+    color: '#9ca3af',
+    fontWeight: '500',
   },
   price: {
     fontSize: 28,
