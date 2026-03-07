@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 const LANGUAGES = [
@@ -10,38 +10,61 @@ const LANGUAGES = [
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language;
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language || 'en');
+
+  useEffect(() => {
+    // Sync state with i18n language
+    const handleLanguageChanged = (lng: string) => {
+      setSelectedLanguage(lng);
+    };
+
+    i18n.on('languageChanged', handleLanguageChanged);
+
+    return () => {
+      i18n.off('languageChanged', handleLanguageChanged);
+    };
+  }, [i18n]);
 
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
   };
 
   return (
-    <View style={styles.container}>
-      {LANGUAGES.map((language) => (
-        <TouchableOpacity
-          key={language.code}
-          style={[
-            styles.languageButton,
-            currentLanguage === language.code && styles.activeLanguageButton,
-          ]}
-          onPress={() => handleLanguageChange(language.code)}
-        >
-          <Text
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContainer}
+    >
+      <View style={styles.container}>
+        {LANGUAGES.map((language) => (
+          <TouchableOpacity
+            key={language.code}
             style={[
-              styles.languageText,
-              currentLanguage === language.code && styles.activeLanguageText,
+              styles.languageButton,
+              selectedLanguage === language.code && styles.activeLanguageButton,
             ]}
+            onPress={() => handleLanguageChange(language.code)}
+            activeOpacity={0.7}
           >
-            {language.nativeName}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
+            <Text
+              style={[
+                styles.languageText,
+                selectedLanguage === language.code && styles.activeLanguageText,
+              ]}
+            >
+              {language.nativeName}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -49,11 +72,13 @@ const styles = StyleSheet.create({
   },
   languageButton: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 8,
     backgroundColor: '#f5f5f5',
     borderWidth: 1,
     borderColor: '#e5e5e5',
+    minWidth: 80,
+    alignItems: 'center',
   },
   activeLanguageButton: {
     backgroundColor: '#2563eb',

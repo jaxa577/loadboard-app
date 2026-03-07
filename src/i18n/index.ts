@@ -57,4 +57,25 @@ i18n
     },
   });
 
+// Helper function to change language
+export const changeLanguage = async (language: string) => {
+  try {
+    await i18n.changeLanguage(language);
+    await AsyncStorage.setItem(LANGUAGE_KEY, language);
+  } catch (error) {
+    console.error('Error changing language:', error);
+  }
+};
+
+// Available languages
+export const LANGUAGES = [
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+  { code: 'kk', name: 'Kazakh', nativeName: 'Қазақша' },
+  { code: 'ky', name: 'Kyrgyz', nativeName: 'Кыргызча' },
+  { code: 'tg', name: 'Tajik', nativeName: 'Тоҷикӣ' },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe' },
+  { code: 'uz', name: 'Uzbek', nativeName: 'Oʻzbekcha' },
+];
+
 export default i18n;

@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Loading...",
+    "loadingMore": "Loading more...",
     "save": "Save",
     "cancel": "Cancel",
     "submit": "Submit",
@@ -9,7 +10,19 @@
     "yes": "Yes",
     "no": "No",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "retry": "Retry",
+    "unknown": "Unknown"
+  },
+  "errors": {
+    "error": "Error",
+    "authError": "Authentication Error",
+    "sessionExpired": "Your session has expired. Please login again.",
+    "fetchFailed": "Failed to fetch data. Please try again."
+  },
+  "units": {
+    "kg": "kg",
+    "tons": "t"
   },
   "auth": {
     "login": "Login",
@@ -39,6 +52,32 @@
     "history": "History",
     "chat": "Messages",
     "profile": "Profile"
+  },
+  "load": {
+    "totalLoads": "Total loads",
+    "searchPlaceholder": "Search by city, cargo or ID...",
+    "noLoads": "No loads found",
+    "adjustFilters": "Try adjusting your search or filters",
+    "checkLater": "Check back later for new loads",
+    "cargo": "Cargo",
+    "weight": "Weight",
+    "loading": "Loading",
+    "delivery": "Delivery"
+  },
+  "filter": {
+    "title": "Filters",
+    "priceRange": "Price Range",
+    "weightRange": "Weight Range (kg)",
+    "cargoType": "Cargo Type",
+    "cargoTypePlaceholder": "e.g., Electronics, Food",
+    "originCity": "Origin City",
+    "originCityPlaceholder": "e.g., Moscow",
+    "destinationCity": "Destination City",
+    "destinationCityPlaceholder": "e.g., Almaty",
+    "min": "Min",
+    "max": "Max",
+    "clearAll": "Clear All",
+    "apply": "Apply Filters"
   },
   "loads": {
     "availableLoads": "Available Loads",

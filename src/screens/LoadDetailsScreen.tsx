@@ -258,8 +258,10 @@ const styles = StyleSheet.create({
   },
   idText: {
     fontSize: 14,
-    color: '#9ca3af',
-    fontWeight: '500',
+    fontWeight: '600',
+    color: '#2563eb',
+    marginTop: 4,
+    fontFamily: 'monospace',
   },
   price: {
     fontSize: 28,

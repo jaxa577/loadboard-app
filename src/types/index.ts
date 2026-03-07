@@ -3,16 +3,19 @@ export interface Load {
   displayId?: string;
   originCity: string;
   originRegion: string;
+  originCountry?: string;
   originLatitude?: number;
   originLongitude?: number;
   destinationCity: string;
   destinationRegion: string;
+  destinationCountry?: string;
   destinationLatitude?: number;
   destinationLongitude?: number;
   cargoType: string;
   weight: number;
   volume?: number;
   price: number;
+  currency?: string;
   loadingDate: string;
   deliveryDate: string;
   status: string;
@@ -25,6 +28,13 @@ export interface Load {
   };
   applications?: Application[];
   createdAt: string;
+}
+
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
 }
 
 export interface Application {
