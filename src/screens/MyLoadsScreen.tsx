@@ -103,7 +103,7 @@ export default function MyLoadsScreen({ navigation }: Props) {
           <View style={styles.detailRow}>
              <Text style={styles.detailLabel}>{t('load.date')}:</Text>
              <Text style={styles.detailValue}>
-               {new Date(load.loadingDate || load.deliveryDate || Date.now()).toLocaleDateString()}
+               {new Date(load.loadingDate || load.deliveryDate || Date.now()).toLocaleDateString() === new Date().toLocaleDateString() ? t('time.today') : new Date(load.loadingDate || load.deliveryDate || Date.now()).toLocaleDateString()}
              </Text>
           </View>
           <View style={styles.detailRow}>

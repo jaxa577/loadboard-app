@@ -245,7 +245,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>{t('load.loadingDate')}:</Text>
           <Text style={styles.detailValue}>
-            {new Date(item.loadingDate).toLocaleDateString()}
+            {new Date(item.loadingDate).toLocaleDateString() === new Date().toLocaleDateString() ? t('time.today') : new Date(item.loadingDate).toLocaleDateString()}
           </Text>
         </View>
       </View>
