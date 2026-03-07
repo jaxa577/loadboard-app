@@ -19,6 +19,7 @@ import RatingsScreen from '../screens/RatingsScreen';
 import VerificationScreen from '../screens/VerificationScreen';
 import PostLoadScreen from '../screens/PostLoadScreen';
 import ManageApplicationsScreen from '../screens/ManageApplicationsScreen';
+import BrokerLoadsScreen from '../screens/BrokerLoadsScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -37,7 +38,7 @@ function MainTabs() {
 
           if (route.name === 'AvailableLoads') {
             iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'MyLoads' || route.name === 'MyPostedLoads') {
+          } else if (route.name === 'MyLoads' || route.name === 'Loads') {
             iconName = focused ? 'briefcase' : 'briefcase-outline';
           } else if (route.name === 'Applications' || route.name === 'ManageApplications') {
             iconName = focused ? 'document-text' : 'document-text-outline';
@@ -76,9 +77,9 @@ function MainTabs() {
       ) : (
         <>
           <Tab.Screen
-            name="MyPostedLoads"
-            component={MyLoadsScreen}
-            options={{ title: t('nav.myPostedLoads') }}
+            name="Loads"
+            component={BrokerLoadsScreen}
+            options={{ title: t('nav.loads') || 'Loads' }}
           />
           <Tab.Screen
             name="PostLoad"
