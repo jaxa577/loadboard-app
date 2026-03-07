@@ -202,7 +202,8 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
     return `${weightKg} ${t('units.kg')}`;
   };
 
-  const formatPrice = (price: number, currency: string = 'USD') => {
+  const formatPrice = (price: number | null | undefined, currency: string = 'USD') => {
+    if (price == null) return t('load.negotiable') || 'Negotiable';
     const symbols: Record<string, string> = {
       USD: '$',
       EUR: '€',

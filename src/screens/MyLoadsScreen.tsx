@@ -108,7 +108,7 @@ export default function MyLoadsScreen({ navigation }: Props) {
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>{t('load.payment')}:</Text>
-            <Text style={styles.priceValue}>${load.price}</Text>
+            <Text style={styles.priceValue}>{load.price != null ? `$${load.price}` : t('load.negotiable') || 'Negotiable'}</Text>
           </View>
         </View>
 
