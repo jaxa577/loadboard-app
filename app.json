@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "CLB Driver",
+    "name": "LoadBord",
     "slug": "clb-mobile-driver",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/LB.svg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/LB.svg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,7 +25,7 @@
     "android": {
       "package": "com.clb.driver",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/LB.svg",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -36,7 +36,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/LB.svg"
     },
     "extra": {
       "eas": {

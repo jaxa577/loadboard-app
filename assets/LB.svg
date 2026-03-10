@@ -1,0 +1,44 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <!-- Deep luxury background -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#111827"></stop>
+      <stop offset="100%" stop-color="#05070F"></stop>
+    </radialGradient>
+
+    <!-- Metallic premium gradient -->
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5E7EB"></stop>
+      <stop offset="50%" stop-color="#9CA3AF"></stop>
+      <stop offset="100%" stop-color="#F3F4F6"></stop>
+    </linearGradient>
+
+    <!-- Accent blue -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB"></stop>
+      <stop offset="100%" stop-color="#06B6D4"></stop>
+    </linearGradient>
+
+    <!-- Soft shadow -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000000" flood-opacity="0.4"></feDropShadow>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="800" rx="160" fill="url(#bgGrad)"></rect>
+
+  <!-- Subtle ring -->
+  <circle cx="400" cy="400" r="260" fill="none" stroke="url(#accentGrad)" stroke-width="6" opacity="0.25"></circle>
+
+  <!-- LB Monogram -->
+  <text x="400" y="470" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="300" font-weight="900" fill="url(#metalGrad)" letter-spacing="-15" filter="url(#softShadow)">
+    LB
+  </text>
+
+  <!-- Bottom accent line -->
+  <rect x="260" y="560" width="280" height="8" rx="4" fill="url(#accentGrad)"></rect>
+
+</svg>
