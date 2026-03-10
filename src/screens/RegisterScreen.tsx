@@ -34,27 +34,27 @@ export default function RegisterScreen() {
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      Alert.alert('Error', 'Please enter your name');
+      Alert.alert(t('common.error') || 'Error', t('auth.nameRequired') || 'Please enter your name');
       return false;
     }
 
     if (!formData.phone.trim()) {
-      Alert.alert('Error', 'Please enter your phone number');
+      Alert.alert(t('common.error') || 'Error', t('auth.phoneRequired') || 'Please enter your phone number');
       return false;
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      Alert.alert(t('common.error') || 'Error', t('auth.invalidEmail') || 'Please enter a valid email address');
       return false;
     }
 
     if (!formData.password || formData.password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert(t('common.error') || 'Error', t('auth.minCharacters') || 'Password must be at least 6 characters');
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert(t('common.error') || 'Error', t('auth.passwordsNotMatch') || 'Passwords do not match');
       return false;
     }
 
@@ -77,16 +77,16 @@ export default function RegisterScreen() {
       await api.post('/auth/register', registerData);
 
       Alert.alert(
-        'Success',
-        'Registration successful! Please login with your credentials.',
+        t('common.success') || 'Success',
+        t('auth.registrationSuccess') || 'Registration successful! Please login with your credentials.',
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        'Registration failed. Please try again.';
-      Alert.alert('Registration Failed', errorMessage);
+        t('auth.registrationFailed') || 'Registration failed. Please try again.';
+      Alert.alert(t('common.error') || 'Registration Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export default function RegisterScreen() {
       >
         <View style={styles.content}>
           <Text style={styles.title}>{t('auth.registerTitle')}</Text>
-          <Text style={styles.subtitle}>Join as a Driver, Broker, or Shipper</Text>
+          <Text style={styles.subtitle}>{t('auth.joinAs') || 'Join as a Driver, Broker, or Shipper'}</Text>
 
           <View style={styles.roleSelector}>
             {(['DRIVER', 'BROKER', 'SHIPPER'] as const).map((role) => (
@@ -133,7 +133,7 @@ export default function RegisterScreen() {
             <Text style={styles.label}>{t('auth.name')} *</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. John Doe"
+              placeholder={t('profile.enterName') || "e.g. John Doe"}
               placeholderTextColor="#9ca3af"
               value={formData.name}
               onChangeText={(text) => updateField('name', text)}
@@ -155,7 +155,7 @@ export default function RegisterScreen() {
             <Text style={styles.label}>{t('auth.email')} ({t('common.optional') || 'Optional'})</Text>
             <TextInput
               style={styles.input}
-              placeholder="you@example.com"
+              placeholder={t('profile.enterEmail') || "you@example.com"}
               placeholderTextColor="#9ca3af"
               value={formData.email}
               onChangeText={(text) => updateField('email', text)}
@@ -167,7 +167,7 @@ export default function RegisterScreen() {
             <Text style={styles.label}>{t('auth.password')} *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Min 6 characters"
+              placeholder={t('auth.minCharacters') || "Min 6 characters"}
               placeholderTextColor="#9ca3af"
               value={formData.password}
               onChangeText={(text) => updateField('password', text)}
@@ -175,10 +175,10 @@ export default function RegisterScreen() {
               editable={!loading}
             />
 
-            <Text style={styles.label}>{t('auth.password')} (Confirm) *</Text>
+            <Text style={styles.label}>{t('auth.confirmPassword') || 'Password (Confirm)'} *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Repeat password"
+              placeholder={t('auth.repeatPassword') || "Repeat password"}
               placeholderTextColor="#9ca3af"
               value={formData.confirmPassword}
               onChangeText={(text) => updateField('confirmPassword', text)}

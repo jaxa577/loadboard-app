@@ -12,11 +12,13 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 
 export default function PostLoadScreen() {
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     originCountry: 'Russia',
@@ -41,15 +43,15 @@ export default function PostLoadScreen() {
 
   const validateForm = () => {
     if (!formData.originCity.trim() || !formData.destinationCity.trim()) {
-      Alert.alert('Error', 'Origin and destination cities are required');
+      Alert.alert(t('common.error') || 'Error', t('errors.citiesRequired') || 'Origin and destination cities are required');
       return false;
     }
     if (!formData.cargoType.trim()) {
-      Alert.alert('Error', 'Cargo type is required');
+      Alert.alert(t('common.error') || 'Error', t('errors.cargoRequired') || 'Cargo type is required');
       return false;
     }
     if (!formData.weight.trim() || isNaN(Number(formData.weight))) {
-      Alert.alert('Error', 'Valid weight is required');
+      Alert.alert(t('common.error') || 'Error', t('errors.weightRequired') || 'Valid weight is required');
       return false;
     }
     return true;
@@ -70,7 +72,7 @@ export default function PostLoadScreen() {
 
       await api.post('/loads', payload);
 
-      Alert.alert('Success', 'Load posted successfully!', [{ text: 'OK' }]);
+      Alert.alert(t('common.success') || 'Success', t('load.postedSuccess') || 'Load posted successfully!', [{ text: 'OK' }]);
       // Reset form
       setFormData({
         ...formData,
@@ -82,8 +84,8 @@ export default function PostLoadScreen() {
       });
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to post load.';
-      Alert.alert('Error', errorMessage);
+        error.response?.data?.message || error.message || t('errors.postFailed') || 'Failed to post load.';
+      Alert.alert(t('common.error') || 'Error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -101,52 +103,52 @@ export default function PostLoadScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.form}>
-          <Text style={styles.sectionTitle}>Origin</Text>
-          <Text style={styles.label}>Origin Country</Text>
+          <Text style={styles.sectionTitle}>{t('load.origin') || 'Origin'}</Text>
+          <Text style={styles.label}>{t('load.originCountry') || 'Origin Country'}</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Russia"
+            placeholder={t('load.originCountryPlaceholder') || 'e.g. Russia'}
             placeholderTextColor="#9ca3af"
             value={formData.originCountry}
             onChangeText={(text) => updateField('originCountry', text)}
           />
-          <Text style={styles.label}>Origin City *</Text>
+          <Text style={styles.label}>{t('load.originCity') || 'Origin City'} *</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Moscow"
+            placeholder={t('load.originCityPlaceholder') || 'e.g. Moscow'}
             placeholderTextColor="#9ca3af"
             value={formData.originCity}
             onChangeText={(text) => updateField('originCity', text)}
           />
 
-          <Text style={styles.sectionTitle}>Destination</Text>
-          <Text style={styles.label}>Destination Country</Text>
+          <Text style={styles.sectionTitle}>{t('load.destination') || 'Destination'}</Text>
+          <Text style={styles.label}>{t('load.destinationCountry') || 'Destination Country'}</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Russia"
+            placeholder={t('load.destinationCountryPlaceholder') || 'e.g. Russia'}
             placeholderTextColor="#9ca3af"
             value={formData.destinationCountry}
             onChangeText={(text) => updateField('destinationCountry', text)}
           />
-          <Text style={styles.label}>Destination City *</Text>
+          <Text style={styles.label}>{t('load.destinationCity') || 'Destination City'} *</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. St. Petersburg"
+            placeholder={t('load.destinationCityPlaceholder') || 'e.g. St. Petersburg'}
             placeholderTextColor="#9ca3af"
             value={formData.destinationCity}
             onChangeText={(text) => updateField('destinationCity', text)}
           />
 
-          <Text style={styles.sectionTitle}>Cargo Details</Text>
-          <Text style={styles.label}>Cargo Type *</Text>
+          <Text style={styles.sectionTitle}>{t('load.cargoDetails') || 'Cargo Details'}</Text>
+          <Text style={styles.label}>{t('load.cargoType') || 'Cargo Type'} *</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Steel, Electronics"
+            placeholder={t('load.cargoTypePlaceholder') || 'e.g. Steel, Electronics'}
             placeholderTextColor="#9ca3af"
             value={formData.cargoType}
             onChangeText={(text) => updateField('cargoType', text)}
           />
-          <Text style={styles.label}>Weight (tons) *</Text>
+          <Text style={styles.label}>{t('load.weight') || 'Weight (tons)'} *</Text>
           <TextInput
             style={styles.input}
             placeholder="e.g. 20"
@@ -156,7 +158,7 @@ export default function PostLoadScreen() {
             onChangeText={(text) => updateField('weight', text)}
           />
 
-          <Text style={styles.label}>Trucks Needed (Optional)</Text>
+          <Text style={styles.label}>{t('load.trucksCount') || 'Trucks Needed'} ({t('common.optional') || 'Optional'})</Text>
           <TextInput
             style={styles.input}
             placeholder="e.g. 2"
@@ -166,7 +168,7 @@ export default function PostLoadScreen() {
             onChangeText={(text) => updateField('trucksCount', text)}
           />
 
-          <Text style={styles.label}>Truck Type (TENT, REFRIGERATOR, etc.)</Text>
+          <Text style={styles.label}>{t('load.truckType') || 'Truck Type'} (TENT, REFRIGERATOR, etc.)</Text>
           <View style={styles.pickerSubstitute}>
             {['TENT', 'REFRIGERATOR', 'CONTAINER'].map((type) => (
               <TouchableOpacity
@@ -189,9 +191,9 @@ export default function PostLoadScreen() {
             ))}
           </View>
 
-          <Text style={styles.sectionTitle}>Payment & Schedule</Text>
+          <Text style={styles.sectionTitle}>{t('load.paymentAndSchedule') || 'Payment & Schedule'}</Text>
           
-          <Text style={styles.label}>Price & Currency (Optional)</Text>
+          <Text style={styles.label}>{t('load.price') || 'Price'} ({t('common.optional') || 'Optional'})</Text>
           <View style={styles.row}>
             <TextInput
               style={[styles.input, styles.flex2]}
@@ -224,7 +226,7 @@ export default function PostLoadScreen() {
             </View>
           </View>
 
-          <Text style={styles.label}>Loading Date (YYYY-MM-DD) *</Text>
+          <Text style={styles.label}>{t('load.loadingDate') || 'Loading Date'} (YYYY-MM-DD) *</Text>
           <TextInput
             style={styles.input}
             placeholder="YYYY-MM-DD"
@@ -233,11 +235,11 @@ export default function PostLoadScreen() {
             onChangeText={(text) => updateField('loadingDate', text)}
           />
 
-          <Text style={styles.sectionTitle}>Contact Info</Text>
-          <Text style={styles.label}>Contact Phone</Text>
+          <Text style={styles.sectionTitle}>{t('load.contactInfo') || 'Contact Info'}</Text>
+          <Text style={styles.label}>{t('load.contactPhone') || 'Contact Phone'}</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. +7 999 123 45 67"
+            placeholder="+7 999 123 45 67"
             placeholderTextColor="#9ca3af"
             keyboardType="phone-pad"
             value={formData.contactPhone}
@@ -252,7 +254,7 @@ export default function PostLoadScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Post Load</Text>
+              <Text style={styles.buttonText}>{t('load.createLoad') || 'Post Load'}</Text>
             )}
           </TouchableOpacity>
         </View>

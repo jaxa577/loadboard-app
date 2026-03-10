@@ -14,13 +14,20 @@ export default {
     "confirm": "Tasdiqlash",
     "yes": "Ha",
     "no": "Yo'q",
-    "role": "Rol"
+    "role": "Rol",
+    "optional": "Ixtiyoriy",
+    "loadingMore": "Yana yuklanmoqda...",
+    "unknown": "Noma'lum",
+    "retry": "Qayta urinish",
+    "error": "Xatolik"
   },
   "nav": {
     "home": "Asosiy",
     "availableLoads": "Bo'sh yuklar",
     "myLoads": "Mening yuklarim",
+    "allLoads": "Barcha yuklar",
     "myPostedLoads": "E'lon qilingan",
+    "loads": "Yuklar",
     "createLoad": "Yuk yaratish",
     "manageApplications": "Nomzodlar",
     "applications": "Arizalar",
@@ -34,12 +41,19 @@ export default {
     "register": "Ro'yxatdan o'tish",
     "email": "Email",
     "password": "Parol",
+    "confirmPassword": "Parol (Tasdiqlash)",
     "name": "Ism",
     "phone": "Telefon",
     "loginTitle": "Tizimga kirish",
     "registerTitle": "Hisob yaratish",
     "alreadyHaveAccount": "Hisobingiz bormi? Kirish",
-    "dontHaveAccount": "Hisobingiz yo'qmi? Ro'yxatdan o'tish"
+    "dontHaveAccount": "Hisobingiz yo'qmi? Ro'yxatdan o'tish",
+    "joinAs": "Haydovchi, Broker yoki Yuk jo'natuvchi sifatida qo'shiling",
+    "minCharacters": "Min. 6 ta belgi",
+    "repeatPassword": "Parolni takrorlang",
+    "registrationSuccess": "Muvaffaqiyatli ro'yxatdan o'tdingiz! Tizimga kiring.",
+    "registrationFailed": "Ro'yxatdan o'tish bekor qilindi. Qayta urinib ko'ring.",
+    "loginError": "Kirishda xatolik"
   },
   "roles": {
     "driver": "Haydovchi",
@@ -68,7 +82,45 @@ export default {
     "posted": "E'lon qilingan",
     "id": "ID",
     "cargoDetails": "Yuk parametrlari",
-    "schedule": "Jadval"
+    "schedule": "Jadval",
+    "trucksCount": "Kerakli mashinalar",
+    "contactPhone": "Aloqa telefoni",
+    "currency": "Valyuta",
+    "negotiable": "Kelishilgan holda",
+    "startJourney": "Safarni boshlash",
+    "totalLoads": "Jami yuklar",
+    "searchPlaceholder": "Qidiruv ...",
+    "noActiveLoads": "Faol yuklar yo'q",
+    "applyToStart": "Boshlash uchun ariza bering",
+    "adjustFilters": "Filtrlarni moslab ko'ring",
+    "checkLater": "Yangi yuklarni keyinroq tekshiring",
+    "payment": "To'lov",
+    "date": "Sana"
+  },
+  "filter": {
+    "title": "Filtrlar",
+    "priceRange": "Narx diapazoni",
+    "weightRange": "Og'irlik diapazoni",
+    "cargoType": "Yuk turi",
+    "originCity": "Jo'natish shahri",
+    "destinationCity": "Qabul qilish shahri",
+    "min": "Min",
+    "max": "Maks",
+    "clearAll": "Tozalash",
+    "apply": "Qo'llash",
+    "cargoTypePlaceholder": "masalan. ELEKTRONIKA",
+    "originCityPlaceholder": "masalan. Moskva",
+    "destinationCityPlaceholder": "masalan. Qozon"
+  },
+  "units": {
+    "tons": "tonna",
+    "kg": "kg"
+  },
+  "errors": {
+    "fetchFailed": "Ma'lumotlarni yuklashda xatolik",
+    "authError": "Avtorizatsiya xatosi",
+    "sessionExpired": "Sessiya muddati tugadi",
+    "error": "Xatolik"
   },
   "applications": {
     "title": "Arizalar",
@@ -92,6 +144,7 @@ export default {
     "uzbek": "O'zbekcha"
   },
   "time": {
-    "recently": "Yaqinda"
+    "recently": "Yaqinda",
+    "today": "Bugun"
   }
 }

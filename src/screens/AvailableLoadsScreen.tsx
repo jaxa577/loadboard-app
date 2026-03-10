@@ -203,14 +203,17 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
   };
 
   const formatPrice = (price: number | null | undefined, currency: string = 'USD') => {
-    if (price == null) return t('load.negotiable') || 'Negotiable';
+    if (price == null || isNaN(Number(price))) return t('load.negotiable') || 'Negotiable';
     const symbols: Record<string, string> = {
       USD: '$',
       EUR: '€',
       RUB: '₽',
       KZT: '₸',
     };
-    return `${symbols[currency] || currency}${price.toLocaleString()}`;
+    const formattedPrice = Number(price)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return `${symbols[currency] || currency}${formattedPrice}`;
   };
 
   const renderLoadCard = ({ item }: { item: Load }) => (
@@ -246,7 +249,7 @@ export default function AvailableLoadsScreen({ navigation }: Props) {
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>{t('load.loadingDate')}:</Text>
           <Text style={styles.detailValue}>
-            {new Date(item.loadingDate).toLocaleDateString() === new Date().toLocaleDateString() ? t('time.today') : new Date(item.loadingDate).toLocaleDateString()}
+            {new Date(item.loadingDate).toDateString() === new Date().toDateString() ? t('time.today') : new Date(item.loadingDate).toISOString().split('T')[0]}
           </Text>
         </View>
       </View>

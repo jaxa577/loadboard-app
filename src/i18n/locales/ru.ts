@@ -14,13 +14,20 @@ export default {
     "confirm": "Подтвердить",
     "yes": "Да",
     "no": "Нет",
-    "role": "Роль"
+    "role": "Роль",
+    "optional": "Необязательно",
+    "loadingMore": "Загрузка еще...",
+    "unknown": "Неизвестно",
+    "retry": "Повторить",
+    "error": "Ошибка"
   },
   "nav": {
     "home": "Главная",
     "availableLoads": "Свободные грузы",
     "myLoads": "Мои грузы",
+    "allLoads": "Все грузы",
     "myPostedLoads": "Опубликованные",
+    "loads": "Грузы",
     "createLoad": "Создать груз",
     "manageApplications": "Кандидаты",
     "applications": "Заявки",
@@ -34,12 +41,19 @@ export default {
     "register": "Регистрация",
     "email": "Email",
     "password": "Пароль",
+    "confirmPassword": "Пароль (Подтверждение)",
     "name": "Имя",
     "phone": "Телефон",
     "loginTitle": "Вход в систему",
     "registerTitle": "Создать аккаунт",
     "alreadyHaveAccount": "Уже есть аккаунт? Войти",
-    "dontHaveAccount": "Нет аккаунта? Регистрация"
+    "dontHaveAccount": "Нет аккаунта? Регистрация",
+    "joinAs": "Присоединяйтесь как Водитель, Брокер или Грузоотправитель",
+    "minCharacters": "Минимум 6 символов",
+    "repeatPassword": "Повторите пароль",
+    "registrationSuccess": "Успешная регистрация! Войдите в систему.",
+    "registrationFailed": "Ошибка регистрации. Попробуйте еще раз.",
+    "loginError": "Ошибка входа"
   },
   "roles": {
     "driver": "Водитель",
@@ -68,7 +82,45 @@ export default {
     "posted": "Опубликовано",
     "id": "ID",
     "cargoDetails": "Параметры груза",
-    "schedule": "Расписание"
+    "schedule": "Расписание",
+    "trucksCount": "Количество машин",
+    "contactPhone": "Контактный телефон",
+    "currency": "Валюта",
+    "negotiable": "Договорная",
+    "startJourney": "Начать поездку",
+    "totalLoads": "Всего грузов",
+    "searchPlaceholder": "Поиск ...",
+    "noActiveLoads": "Нет активных грузов",
+    "applyToStart": "Оставьте заявку, чтобы начать",
+    "adjustFilters": "Попробуйте изменить фильтры",
+    "checkLater": "Проверьте позже новые грузы",
+    "payment": "Оплата",
+    "date": "Дата"
+  },
+  "filter": {
+    "title": "Фильтры",
+    "priceRange": "Диапазон цены",
+    "weightRange": "Диапазон веса",
+    "cargoType": "Тип груза",
+    "originCity": "Город отправления",
+    "destinationCity": "Город назначения",
+    "min": "Мин",
+    "max": "Макс",
+    "clearAll": "Очистить все",
+    "apply": "Применить",
+    "cargoTypePlaceholder": "напр. ЭЛЕКТРОНИКА",
+    "originCityPlaceholder": "напр. Москва",
+    "destinationCityPlaceholder": "напр. Казань"
+  },
+  "units": {
+    "tons": "тонн",
+    "kg": "кг"
+  },
+  "errors": {
+    "fetchFailed": "Не удалось загрузить данные",
+    "authError": "Ошибка авторизации",
+    "sessionExpired": "Срок сессии истек",
+    "error": "Ошибка"
   },
   "applications": {
     "title": "Заявки",
@@ -92,6 +144,7 @@ export default {
     "uzbek": "Узбекский"
   },
   "time": {
-    "recently": "Недавно"
+    "recently": "Недавно",
+    "today": "Сегодня"
   }
 }

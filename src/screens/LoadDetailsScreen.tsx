@@ -51,10 +51,10 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
 
   const handleApply = async () => {
     Alert.alert(
-      'Apply to Load',
-      'Are you sure you want to apply to this load?',
+      t('load.apply') || 'Apply to Load',
+      t('load.applyConfirm') || 'Are you sure you want to apply to this load?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel') || 'Cancel', style: 'cancel' },
         {
           text: t('common.apply'),
           onPress: async () => {
@@ -65,8 +65,8 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
               Alert.alert(t('common.success'), t('common.success'));
             } catch (error: any) {
               Alert.alert(
-                t('common.error'),
-                error.response?.data?.message || 'Failed to apply'
+                t('common.error') || 'Error',
+                error.response?.data?.message || t('errors.applyFailed') || 'Failed to apply'
               );
             } finally {
               setApplying(false);
@@ -107,7 +107,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('load.routeInfo')}</Text>
+          <Text style={styles.sectionTitle}>{t('load.routeInfo') || 'Route Info'}</Text>
           <View style={styles.infoRow}>
             <Text style={styles.label}>{t('load.origin')}:</Text>
             <Text style={styles.value}>
@@ -134,7 +134,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
           </View>
           {load.volume && (
             <View style={styles.infoRow}>
-              <Text style={styles.label}>Volume:</Text>
+              <Text style={styles.label}>{t('load.volume') || 'Volume'}:</Text>
               <Text style={styles.value}>{load.volume} m³</Text>
             </View>
           )}
@@ -151,21 +151,13 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
           <View style={styles.infoRow}>
             <Text style={styles.label}>{t('load.loadingDate')}:</Text>
             <Text style={styles.value}>
-              {new Date(load.loadingDate).toLocaleDateString(i18n.language, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {new Date(load.loadingDate).toISOString().split('T')[0]}
             </Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>{t('load.deliveryDate')}:</Text>
             <Text style={styles.value}>
-              {new Date(load.deliveryDate).toLocaleDateString(i18n.language, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {new Date(load.deliveryDate).toISOString().split('T')[0]}
             </Text>
           </View>
         </View>
@@ -195,7 +187,7 @@ export default function LoadDetailsScreen({ route, navigation }: Props) {
             )}
             {load.shipper.rating && (
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Rating:</Text>
+                <Text style={styles.label}>{t('profile.rating') || 'Rating'}:</Text>
                 <Text style={styles.value}>
                   ⭐ {load.shipper.rating.toFixed(1)}
                 </Text>

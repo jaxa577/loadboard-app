@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import websocketService from '../services/websocket';
 import { useAuth } from '../contexts/AuthContext';
@@ -27,6 +28,7 @@ interface Message {
 export default function ChatConversationScreen() {
   const route = useRoute();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { userId, userName } = route.params as { userId: string; userName: string };
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -149,7 +151,7 @@ export default function ChatConversationScreen() {
     <View style={styles.emptyContainer}>
       <Ionicons name="chatbubble-ellipses-outline" size={64} color="#d1d5db" />
       <Text style={styles.emptyText}>
-        No messages yet. Send a message to start the conversation.
+        {t('chat.noMessages') || 'No messages yet. Send a message to start the conversation.'}
       </Text>
     </View>
   );
@@ -182,7 +184,7 @@ export default function ChatConversationScreen() {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Type a message..."
+          placeholder={t('chat.typeMessage') || 'Type a message...'}
           value={inputText}
           onChangeText={setInputText}
           multiline
@@ -307,7 +309,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#333',
     color: '#666',
     textAlign: 'center',
     lineHeight: 24,

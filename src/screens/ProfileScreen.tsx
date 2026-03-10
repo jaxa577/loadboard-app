@@ -44,12 +44,12 @@ export default function ProfileScreen() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) {
-      Alert.alert('Error', 'Name is required');
+      Alert.alert(t('common.error') || 'Error', t('auth.nameRequired') || 'Name is required');
       return;
     }
 
     if (!formData.phone.trim()) {
-      Alert.alert('Error', 'Phone is required');
+      Alert.alert(t('common.error') || 'Error', t('auth.phoneRequired') || 'Phone is required');
       return;
     }
 
@@ -63,11 +63,11 @@ export default function ProfileScreen() {
 
       await updateUser(response.data);
       setIsEditing(false);
-      Alert.alert('Success', 'Profile updated successfully');
+      Alert.alert(t('common.success') || 'Success', t('profile.updated') || 'Profile updated successfully');
     } catch (error: any) {
       Alert.alert(
-        'Error',
-        error.response?.data?.message || 'Failed to update profile'
+        t('common.error') || 'Error',
+        error.response?.data?.message || t('profile.updateFailed') || 'Failed to update profile'
       );
     } finally {
       setLoading(false);
@@ -86,10 +86,10 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('nav.logout') || 'Logout', t('profile.logoutConfirm') || 'Are you sure you want to logout?', [
+      { text: t('common.cancel') || 'Cancel', style: 'cancel' },
       {
-        text: 'Logout',
+        text: t('nav.logout') || 'Logout',
         style: 'destructive',
         onPress: async () => {
           await signOut();
@@ -143,7 +143,7 @@ export default function ProfileScreen() {
             value={formData.name}
             onChangeText={(text) => updateField('name', text)}
             editable={isEditing && !loading}
-            placeholder="Enter your name"
+            placeholder={t('profile.enterName') || "Enter your name"}
           />
         </View>
 
@@ -155,7 +155,7 @@ export default function ProfileScreen() {
             onChangeText={(text) => updateField('phone', text)}
             editable={isEditing && !loading}
             keyboardType="phone-pad"
-            placeholder="Enter your phone"
+            placeholder={t('profile.enterPhone') || "Enter your phone"}
           />
         </View>
 
@@ -168,7 +168,7 @@ export default function ProfileScreen() {
             editable={isEditing && !loading}
             keyboardType="email-address"
             autoCapitalize="none"
-            placeholder="Enter your email"
+            placeholder={t('profile.enterEmail') || "Enter your email"}
           />
         </View>
 
@@ -209,7 +209,7 @@ export default function ProfileScreen() {
           onPress={() => (navigation as any).navigate('Verification')}
         >
           <Ionicons name="shield-checkmark-outline" size={24} color="#666" />
-          <Text style={styles.actionText}>Verification</Text>
+          <Text style={styles.actionText}>{t('profile.verification') || 'Verification'}</Text>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
 
@@ -218,7 +218,7 @@ export default function ProfileScreen() {
           onPress={() => (navigation as any).navigate('LoadHistory')}
         >
           <Ionicons name="time-outline" size={24} color="#666" />
-          <Text style={styles.actionText}>History</Text>
+          <Text style={styles.actionText}>{t('profile.history') || 'History'}</Text>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
 
@@ -343,7 +343,6 @@ const styles = StyleSheet.create({
   buttonSaveText: {
     color: '#fff',
     fontSize: 16,
-    color: '#333',
     fontWeight: '600',
   },
   actionButton: {

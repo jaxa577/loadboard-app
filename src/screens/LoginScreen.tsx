@@ -25,7 +25,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert(t('common.error'), 'Please enter email and password');
+      Alert.alert(t('common.error') || 'Error', t('auth.emailPasswordRequired') || 'Please enter email and password');
       return;
     }
 
@@ -34,8 +34,8 @@ export default function LoginScreen() {
       await signIn(email, password);
     } catch (error: any) {
       Alert.alert(
-        t('auth.loginError'),
-        error.response?.data?.message || error.message || 'Invalid credentials'
+        t('auth.loginError') || 'Login Error',
+        error.response?.data?.message || error.message || t('auth.invalidCredentials') || 'Invalid credentials'
       );
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Driver App</Text>
+        <Text style={styles.title}>{t('nav.home') || 'Driver App'}</Text>
         <Text style={styles.subtitle}>{t('auth.loginTitle')}</Text>
 
         <View style={styles.form}>

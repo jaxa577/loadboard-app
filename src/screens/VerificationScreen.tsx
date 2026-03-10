@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
 interface DocumentUpload {
@@ -20,6 +21,7 @@ interface DocumentUpload {
 }
 
 export default function VerificationScreen() {
+  const { t } = useTranslation();
   const [documents, setDocuments] = useState<DocumentUpload[]>([]);
   const [loading, setLoading] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'verified' | 'rejected' | null>(null);
@@ -28,8 +30,8 @@ export default function VerificationScreen() {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
-        'Permission Required',
-        'Camera permission is required to take photos of your documents.'
+        t('common.error') || 'Permission Required',
+        t('verification.cameraPermission') || 'Camera permission is required to take photos of your documents.'
       );
       return false;
     }
@@ -41,19 +43,19 @@ export default function VerificationScreen() {
     if (!hasPermission) return;
 
     Alert.alert(
-      'Select Image',
-      'Choose how you want to provide the image',
+      t('verification.selectImage') || 'Select Image',
+      t('verification.selectImageDesc') || 'Choose how you want to provide the image',
       [
         {
-          text: 'Take Photo',
+          text: t('verification.takePhoto') || 'Take Photo',
           onPress: () => takePhoto(type),
         },
         {
-          text: 'Choose from Gallery',
+          text: t('verification.chooseGallery') || 'Choose from Gallery',
           onPress: () => chooseFromGallery(type),
         },
         {
-          text: 'Cancel',
+          text: t('common.cancel') || 'Cancel',
           style: 'cancel',
         },
       ]
@@ -103,7 +105,7 @@ export default function VerificationScreen() {
 
   const submitVerification = async () => {
     if (documents.length < 3) {
-      Alert.alert('Missing Documents', 'Please upload all required documents before submitting.');
+      Alert.alert(t('common.error') || 'Missing Documents', t('verification.missingDocs') || 'Please upload all required documents before submitting.');
       return;
     }
 
@@ -127,13 +129,13 @@ export default function VerificationScreen() {
 
       setVerificationStatus('pending');
       Alert.alert(
-        'Verification Submitted',
-        'Your documents have been submitted for verification. We will review them and get back to you within 24-48 hours.',
+        t('common.success') || 'Verification Submitted',
+        t('verification.submittedDesc') || 'Your documents have been submitted for verification. We will review them and get back to you within 24-48 hours.',
         [{ text: 'OK' }]
       );
     } catch (error) {
       console.error('Error submitting verification:', error);
-      Alert.alert('Error', 'Failed to submit verification. Please try again.');
+      Alert.alert(t('common.error') || 'Error', t('verification.submitFailed') || 'Failed to submit verification. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -173,7 +175,7 @@ export default function VerificationScreen() {
             onPress={() => pickImage(type)}
           >
             <Ionicons name="camera-outline" size={32} color="#2563eb" />
-            <Text style={styles.uploadButtonText}>Upload Photo</Text>
+            <Text style={styles.uploadButtonText}>{t('verification.uploadPhoto') || 'Upload Photo'}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -204,9 +206,9 @@ export default function VerificationScreen() {
             color="#fff"
           />
           <Text style={styles.statusText}>
-            {verificationStatus === 'pending' && 'Verification Pending'}
-            {verificationStatus === 'verified' && 'Verified'}
-            {verificationStatus === 'rejected' && 'Verification Rejected'}
+            {verificationStatus === 'pending' && (t('verification.statusPending') || 'Verification Pending')}
+            {verificationStatus === 'verified' && (t('verification.statusVerified') || 'Verified')}
+            {verificationStatus === 'rejected' && (t('verification.statusRejected') || 'Verification Rejected')}
           </Text>
         </View>
       )}
@@ -215,29 +217,28 @@ export default function VerificationScreen() {
       <View style={styles.infoCard}>
         <Ionicons name="information-circle" size={24} color="#2563eb" />
         <Text style={styles.infoText}>
-          To ensure safety and trust, please upload clear photos of your driver's license
-          and a selfie for verification. All information is kept secure and confidential.
+          {t('verification.infoText') || "To ensure safety and trust, please upload clear photos of your driver's license and a selfie for verification. All information is kept secure and confidential."}
         </Text>
       </View>
 
       {/* Document Upload Sections */}
       {renderDocumentSection(
-        'Driver License (Front)',
-        'Clear photo of the front side',
+        t('verification.licenseFront') || 'Driver License (Front)',
+        t('verification.licenseFrontDesc') || 'Clear photo of the front side',
         'license-front',
         'card-outline'
       )}
 
       {renderDocumentSection(
-        'Driver License (Back)',
-        'Clear photo of the back side',
+        t('verification.licenseBack') || 'Driver License (Back)',
+        t('verification.licenseBackDesc') || 'Clear photo of the back side',
         'license-back',
         'card-outline'
       )}
 
       {renderDocumentSection(
-        'Selfie with License',
-        'Hold your license next to your face',
+        t('verification.selfie') || 'Selfie with License',
+        t('verification.selfieDesc') || 'Hold your license next to your face',
         'selfie',
         'person-outline'
       )}
@@ -256,29 +257,29 @@ export default function VerificationScreen() {
         ) : (
           <>
             <Ionicons name="shield-checkmark-outline" size={24} color="#fff" />
-            <Text style={styles.submitButtonText}>Submit for Verification</Text>
+            <Text style={styles.submitButtonText}>{t('verification.submit') || 'Submit for Verification'}</Text>
           </>
         )}
       </TouchableOpacity>
 
       {/* Requirements */}
       <View style={styles.requirementsCard}>
-        <Text style={styles.requirementsTitle}>Requirements:</Text>
+        <Text style={styles.requirementsTitle}>{t('verification.requirements') || 'Requirements'}:</Text>
         <View style={styles.requirement}>
           <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-          <Text style={styles.requirementText}>Photos must be clear and not blurry</Text>
+          <Text style={styles.requirementText}>{t('verification.req1') || 'Photos must be clear and not blurry'}</Text>
         </View>
         <View style={styles.requirement}>
           <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-          <Text style={styles.requirementText}>All text must be readable</Text>
+          <Text style={styles.requirementText}>{t('verification.req2') || 'All text must be readable'}</Text>
         </View>
         <View style={styles.requirement}>
           <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-          <Text style={styles.requirementText}>License must be valid and not expired</Text>
+          <Text style={styles.requirementText}>{t('verification.req3') || 'License must be valid and not expired'}</Text>
         </View>
         <View style={styles.requirement}>
           <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-          <Text style={styles.requirementText}>Selfie must clearly show your face</Text>
+          <Text style={styles.requirementText}>{t('verification.req4') || 'Selfie must clearly show your face'}</Text>
         </View>
       </View>
     </ScrollView>

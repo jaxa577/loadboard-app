@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import { journeyService } from '../services/journey';
 import { loadsService } from '../services/loads';
 import { Journey, Load } from '../types';
@@ -23,6 +25,7 @@ type MapProvider = 'google' | 'yandex';
 
 export default function JourneyControlsScreen({ route, navigation }: Props) {
   const { loadId } = route.params;
+  const { t } = useTranslation();
   const [journey, setJourney] = useState<Journey | null>(null);
   const [load, setLoad] = useState<Load | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +55,7 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
       // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Location permission is required');
+        Alert.alert(t('common.error') || 'Permission Denied', t('journey.locationPermission') || 'Location permission is required');
         return;
       }
 
@@ -68,7 +71,7 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
       }
     } catch (error) {
       console.error('Error initializing:', error);
-      Alert.alert('Error', 'Failed to initialize journey');
+      Alert.alert(t('common.error') || 'Error', t('journey.initFailed') || 'Failed to initialize journey');
     } finally {
       setLoading(false);
     }
@@ -79,9 +82,9 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
       const newJourney = await journeyService.startJourney(loadId);
       setJourney(newJourney);
       startLocationTracking(newJourney.id);
-      Alert.alert('Journey Started', 'GPS tracking is now active');
+      Alert.alert(t('journey.startedTitle') || 'Journey Started', t('journey.startedDesc') || 'GPS tracking is now active');
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to start journey');
+      Alert.alert(t('common.error') || 'Error', error.response?.data?.message || t('journey.startFailed') || 'Failed to start journey');
     }
   };
 
@@ -89,22 +92,22 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
     if (!journey) return;
 
     Alert.alert(
-      'Stop Journey',
-      'Are you sure you want to stop this journey?',
+      t('journey.stopTitle') || 'Stop Journey',
+      t('journey.stopConfirm') || 'Are you sure you want to stop this journey?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel') || 'Cancel', style: 'cancel' },
         {
-          text: 'Stop',
+          text: t('common.stop') || 'Stop',
           style: 'destructive',
           onPress: async () => {
             try {
               await journeyService.stopJourney(journey.id);
               stopLocationTracking();
               setJourney(null);
-              Alert.alert('Journey Completed', 'Your journey has been completed');
+              Alert.alert(t('journey.completedTitle') || 'Journey Completed', t('journey.completedDesc') || 'Your journey has been completed');
               navigation.goBack();
             } catch (error: any) {
-              Alert.alert('Error', 'Failed to stop journey');
+              Alert.alert(t('common.error') || 'Error', t('journey.stopFailed') || 'Failed to stop journey');
             }
           },
         },
@@ -311,11 +314,11 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
 
             <View style={styles.statusCard}>
               <View style={styles.statusHeader}>
-                <Text style={styles.statusLabel}>Journey Status</Text>
+                <Text style={styles.statusLabel}>{t('journey.status') || 'Journey Status'}</Text>
                 {journey && tracking && (
                   <View style={styles.trackingIndicator}>
                     <View style={styles.trackingDot} />
-                    <Text style={styles.trackingText}>Tracking</Text>
+                    <Text style={styles.trackingText}>{t('journey.tracking') || 'Tracking'}</Text>
                   </View>
                 )}
               </View>
@@ -323,11 +326,11 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
               {journey ? (
                 <View style={styles.journeyInfo}>
                   <Text style={styles.journeyText}>
-                    Started: {new Date(journey.startTime).toLocaleString()}
+                    {t('journey.started') || 'Started'}: {format(new Date(journey.startTime), 'MMM d, yyyy p')}
                   </Text>
                   {currentLocation && (
                     <View style={styles.locationInfo}>
-                      <Text style={styles.locationText}>Current Location:</Text>
+                      <Text style={styles.locationText}>{t('journey.currentLocation') || 'Current Location'}:</Text>
                       <Text style={styles.coordinates}>
                         {currentLocation.latitude.toFixed(6)},{' '}
                         {currentLocation.longitude.toFixed(6)}
@@ -336,19 +339,19 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
                   )}
                 </View>
               ) : (
-                <Text style={styles.notStartedText}>Journey not started</Text>
+                <Text style={styles.notStartedText}>{t('journey.notStarted') || 'Journey not started'}</Text>
               )}
             </View>
 
             <View style={styles.infoSection}>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Delivery Date:</Text>
+                <Text style={styles.infoLabel}>{t('load.deliveryDate')}:</Text>
                 <Text style={styles.infoValue}>
                   {new Date(load.deliveryDate).toLocaleDateString()}
                 </Text>
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Payment:</Text>
+                <Text style={styles.infoLabel}>{t('load.payment')}:</Text>
                 <Text style={styles.infoPrice}>${load.price}</Text>
               </View>
             </View>
@@ -359,11 +362,11 @@ export default function JourneyControlsScreen({ route, navigation }: Props) {
       <View style={styles.controls}>
         {!journey ? (
           <TouchableOpacity style={styles.startButton} onPress={startJourney}>
-            <Text style={styles.startButtonText}>Start Journey</Text>
+            <Text style={styles.startButtonText}>{t('journey.start') || 'Start Journey'}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.stopButton} onPress={stopJourney}>
-            <Text style={styles.stopButtonText}>Complete Journey</Text>
+            <Text style={styles.stopButtonText}>{t('journey.complete') || 'Complete Journey'}</Text>
           </TouchableOpacity>
         )}
       </View>

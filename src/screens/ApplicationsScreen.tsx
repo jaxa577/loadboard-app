@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import api from '../services/api';
 
 interface Load {
@@ -33,6 +35,7 @@ interface Application {
 
 export default function ApplicationsScreen() {
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -86,11 +89,7 @@ export default function ApplicationsScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return format(date, 'MMM d, yyyy');
   };
 
   const renderApplicationItem = ({ item }: { item: Application }) => (
@@ -141,12 +140,12 @@ export default function ApplicationsScreen() {
 
         <View style={styles.dateRow}>
           <View style={styles.dateItem}>
-            <Text style={styles.dateLabel}>Applied:</Text>
+            <Text style={styles.dateLabel}>{t('load.date') || 'Applied'}:</Text>
             <Text style={styles.dateText}>{formatDate(item.createdAt)}</Text>
           </View>
           {item.updatedAt !== item.createdAt && (
             <View style={styles.dateItem}>
-              <Text style={styles.dateLabel}>Updated:</Text>
+              <Text style={styles.dateLabel}>{t('common.update') || 'Updated'}:</Text>
               <Text style={styles.dateText}>{formatDate(item.updatedAt)}</Text>
             </View>
           )}
@@ -154,7 +153,7 @@ export default function ApplicationsScreen() {
       </View>
 
       <View style={styles.cardFooter}>
-        <Text style={styles.viewDetails}>View Details</Text>
+        <Text style={styles.viewDetails}>{t('common.view') || 'View Details'}</Text>
         <Ionicons name="chevron-forward" size={20} color="#2563eb" />
       </View>
     </TouchableOpacity>
@@ -163,10 +162,9 @@ export default function ApplicationsScreen() {
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="document-text-outline" size={64} color="#d1d5db" />
-      <Text style={styles.emptyTitle}>No Applications</Text>
+      <Text style={styles.emptyTitle}>{t('applications.noApplications')}</Text>
       <Text style={styles.emptyText}>
-        You haven't applied to any loads yet. Browse available loads to get
-        started.
+        {t('applications.emptyText', "You haven't applied to any loads yet. Browse available loads to get started.")}
       </Text>
     </View>
   );

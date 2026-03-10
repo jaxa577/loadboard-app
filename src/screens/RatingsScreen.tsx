@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
+import { format } from 'date-fns';
 import api from '../services/api';
 
 interface Review {
@@ -61,11 +62,7 @@ export default function RatingsScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return format(date, 'MMM d, yyyy');
   };
 
   const renderStars = (rating: number) => {

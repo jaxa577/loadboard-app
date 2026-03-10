@@ -92,7 +92,7 @@ export default function MyLoadsScreen({ navigation }: Props) {
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>{t('load.weight')}:</Text>
-            <Text style={styles.detailValue}>{load.weight} kg</Text>
+            <Text style={styles.detailValue}>{load.weight >= 1000 ? `${(load.weight / 1000).toFixed(1)} ${t('units.tons')}` : `${load.weight} ${t('units.kg')}`}</Text>
           </View>
           <View style={styles.detailRow}>
              <Text style={styles.detailLabel}>{t('load.posted')}:</Text>
@@ -103,7 +103,7 @@ export default function MyLoadsScreen({ navigation }: Props) {
           <View style={styles.detailRow}>
              <Text style={styles.detailLabel}>{t('load.date')}:</Text>
              <Text style={styles.detailValue}>
-               {new Date(load.loadingDate || load.deliveryDate || Date.now()).toLocaleDateString() === new Date().toLocaleDateString() ? t('time.today') : new Date(load.loadingDate || load.deliveryDate || Date.now()).toLocaleDateString()}
+               {new Date(load.loadingDate || load.deliveryDate || Date.now()).toDateString() === new Date().toDateString() ? t('time.today') : new Date(load.loadingDate || load.deliveryDate || Date.now()).toISOString().split('T')[0]}
              </Text>
           </View>
           <View style={styles.detailRow}>

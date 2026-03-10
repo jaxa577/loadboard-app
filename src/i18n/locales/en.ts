@@ -14,13 +14,20 @@ export default {
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
-    "role": "Role"
+    "role": "Role",
+    "optional": "Optional",
+    "loadingMore": "Loading more...",
+    "unknown": "Unknown",
+    "retry": "Retry",
+    "error": "Error"
   },
   "nav": {
     "home": "Home",
     "availableLoads": "Available Loads",
     "myLoads": "My Loads",
+    "allLoads": "All Loads",
     "myPostedLoads": "Posted Loads",
+    "loads": "Loads",
     "createLoad": "Post Load",
     "manageApplications": "Applicants",
     "applications": "Applications",
@@ -34,12 +41,19 @@ export default {
     "register": "Register",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Password (Confirm)",
     "name": "Name",
     "phone": "Phone",
     "loginTitle": "Login",
     "registerTitle": "Create Account",
     "alreadyHaveAccount": "Already have an account? Login",
-    "dontHaveAccount": "Don't have an account? Register"
+    "dontHaveAccount": "Don't have an account? Register",
+    "joinAs": "Join as a Driver, Broker, or Shipper",
+    "minCharacters": "Min 6 characters",
+    "repeatPassword": "Repeat password",
+    "registrationSuccess": "Registration successful! Please login with your credentials.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "loginError": "Login Error"
   },
   "roles": {
     "driver": "Driver",
@@ -68,7 +82,45 @@ export default {
     "posted": "Posted",
     "id": "ID",
     "cargoDetails": "Cargo Details",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "trucksCount": "Trucks Needed",
+    "contactPhone": "Contact Phone",
+    "currency": "Currency",
+    "negotiable": "Negotiable",
+    "startJourney": "Start Journey",
+    "totalLoads": "Total Loads",
+    "searchPlaceholder": "Search ...",
+    "noActiveLoads": "No Active Loads",
+    "applyToStart": "Apply to start a load",
+    "adjustFilters": "Try adjusting your filters",
+    "checkLater": "Check back later for new loads",
+    "payment": "Payment",
+    "date": "Date"
+  },
+  "filter": {
+    "title": "Filters",
+    "priceRange": "Price Range",
+    "weightRange": "Weight Range",
+    "cargoType": "Cargo Type",
+    "originCity": "Origin City",
+    "destinationCity": "Destination City",
+    "min": "Min",
+    "max": "Max",
+    "clearAll": "Clear All",
+    "apply": "Apply",
+    "cargoTypePlaceholder": "e.g. ELECTRONICS",
+    "originCityPlaceholder": "e.g. Moscow",
+    "destinationCityPlaceholder": "e.g. Kazan"
+  },
+  "units": {
+    "tons": "tons",
+    "kg": "kg"
+  },
+  "errors": {
+    "fetchFailed": "Failed to fetch data",
+    "authError": "Authentication Error",
+    "sessionExpired": "Session expired",
+    "error": "Error"
   },
   "applications": {
     "title": "Applications",
@@ -92,6 +144,7 @@ export default {
     "uzbek": "Uzbek"
   },
   "time": {
-    "recently": "Recently"
+    "recently": "Recently",
+    "today": "Today"
   }
 }
