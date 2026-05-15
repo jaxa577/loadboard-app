@@ -4,10 +4,10 @@
     "slug": "clb-mobile-driver",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/LB.svg",
+    "icon": "./assets/LB-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/LB.svg",
+      "image": "./assets/LB-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,9 +23,9 @@
       }
     },
     "android": {
-      "package": "com.clb.driver",
+      "package": "asia.loadboard.app",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/LB.svg",
+        "foregroundImage": "./assets/LB-icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -36,7 +36,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/LB.svg"
+      "favicon": "./assets/LB-icon.png"
     },
     "extra": {
       "eas": {
