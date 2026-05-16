@@ -23,7 +23,7 @@
       }
     },
     "android": {
-      "package": "asia.loadboard.app",
+      "package": "loadboard.asia",
       "adaptiveIcon": {
         "foregroundImage": "./assets/LB-icon.png",
         "backgroundColor": "#ffffff"
